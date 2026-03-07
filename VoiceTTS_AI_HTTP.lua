@@ -49,7 +49,7 @@ Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, -40, 0, 35)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "Voice TTS + AI"
+Title.Text = "AS VoiceTTS+AI"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 16
 Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -118,20 +118,6 @@ rejoinBtn.TextSize = 14
 local rejoinCorner = Instance.new("UICorner")
 rejoinCorner.CornerRadius = UDim.new(0, 6)
 rejoinCorner.Parent = rejoinBtn
-
-local infoBtn = Instance.new("TextButton")
-infoBtn.Parent = MainFrame
-infoBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
-infoBtn.Position = UDim2.new(1, -70, 0, 3)
-infoBtn.Size = UDim2.new(0, 30, 0, 28)
-infoBtn.Font = Enum.Font.GothamBold
-infoBtn.Text = "!"
-infoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-infoBtn.TextSize = 16
-
-local infoCorner = Instance.new("UICorner")
-infoCorner.CornerRadius = UDim.new(0, 6)
-infoCorner.Parent = infoBtn
 
 -- Dragging
 local dragging, dragInput, dragStart, startPos

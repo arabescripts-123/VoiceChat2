@@ -460,21 +460,21 @@ local function processNewMode()
     task.spawn(function()
         while allChatEnabled and not queueMode do
             if #messageQueue > 0 then
-                -- Pega a mensagem mais recente
+                -- Sempre pega a mensagem mais recente e limpa a fila
                 local msg = messageQueue[#messageQueue]
                 messageQueue = {}
                 
+                print("[NEW] Lendo mensagem mais recente:", msg.text)
                 sendTTS(msg.text, msg.id, "low")
                 
                 local textLength = #msg.text
                 local waitTime = math.max(1, textLength * 0.08)
-                print("[NEW] Aguardando", waitTime, "segundos")
                 task.wait(waitTime)
                 
                 -- Aguarda 1 segundo antes de procurar próxima mensagem
                 task.wait(1)
             else
-                -- Se não há mensagens, aguarda um pouco
+                -- Se não há mensagens, aguarda até ter
                 task.wait(0.5)
             end
         end
@@ -531,9 +531,12 @@ local function handleTTS(text, priority)
         print("[FILA] Adicionado:", text, "| Total:", #messageQueue)
         processQueue()
     else
-        messageQueue = {{text = text, id = ttsId}}
-        print("[NEW] Substituindo por:", text)
-        processNewMode()
+        -- Modo New: adiciona na fila mas o processador pegará apenas a mais recente
+        table.insert(messageQueue, {text = text, id = ttsId})
+        print("[NEW] Nova mensagem adicionada:", text)
+        if not isPlayingNew then
+            processNewMode()
+        end
     end
 end
 
@@ -665,7 +668,12 @@ newBtn.MouseButton1Click:Connect(function()
         isPlayingNew = false
         filaIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
         newIndicator.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-        print("[MODO] New ativado")
+        print("[MODO] New ativado - Fila cancelada")
+        
+        -- Inicia modo New
+        if allChatEnabled then
+            processNewMode()
+        end
     end
 end)
 

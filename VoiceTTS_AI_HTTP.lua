@@ -242,8 +242,8 @@ local allChatBtn, allChatIndicator = createButton("All Chat TTS", Content1, 85)
 local modeBackground = Instance.new("Frame")
 modeBackground.Parent = Content1
 modeBackground.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-modeBackground.Position = UDim2.new(0, 10, 0, 125)
-modeBackground.Size = UDim2.new(0, 200, 0, 40)
+modeBackground.Position = UDim2.new(0, 10, 0, 120)
+modeBackground.Size = UDim2.new(0, 200, 0, 45)
 modeBackground.BorderSizePixel = 0
 
 local modeBackgroundCorner = Instance.new("UICorner")
@@ -293,8 +293,8 @@ local musicBtn, musicIndicator = createButton("Música YouTube", Content2, 5)
 local musicBackground = Instance.new("Frame")
 musicBackground.Parent = Content2
 musicBackground.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-musicBackground.Position = UDim2.new(0, 10, 0, 45)
-musicBackground.Size = UDim2.new(0, 200, 0, 160)
+musicBackground.Position = UDim2.new(0, 10, 0, 40)
+musicBackground.Size = UDim2.new(0, 200, 0, 130)
 musicBackground.BorderSizePixel = 0
 
 local musicBackgroundCorner = Instance.new("UICorner")
@@ -331,7 +331,30 @@ local musicPlayCorner = Instance.new("UICorner")
 musicPlayCorner.CornerRadius = UDim.new(0, 6)
 musicPlayCorner.Parent = musicPlayBtn
 
-local playerPermissionBtn, playerPermissionIndicator = createModeButton("Players /play", Content2, 10, 130)
+local playerPermissionBtn = Instance.new("TextButton")
+playerPermissionBtn.Parent = Content2
+playerPermissionBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+playerPermissionBtn.Position = UDim2.new(0, 10, 0, 130)
+playerPermissionBtn.Size = UDim2.new(0, 200, 0, 35)
+playerPermissionBtn.Font = Enum.Font.Gotham
+playerPermissionBtn.Text = "Players /play"
+playerPermissionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+playerPermissionBtn.TextSize = 12
+
+local playerPermissionCorner = Instance.new("UICorner")
+playerPermissionCorner.CornerRadius = UDim.new(0, 6)
+playerPermissionCorner.Parent = playerPermissionBtn
+
+local playerPermissionIndicator = Instance.new("Frame")
+playerPermissionIndicator.Parent = playerPermissionBtn
+playerPermissionIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+playerPermissionIndicator.Position = UDim2.new(1, -25, 0.5, -8)
+playerPermissionIndicator.Size = UDim2.new(0, 16, 0, 16)
+playerPermissionIndicator.BorderSizePixel = 0
+
+local playerPermissionIndicatorCorner = Instance.new("UICorner")
+playerPermissionIndicatorCorner.CornerRadius = UDim.new(1, 0)
+playerPermissionIndicatorCorner.Parent = playerPermissionIndicator
 
 -- Tab System Logic
 tab1.MouseButton1Click:Connect(function()

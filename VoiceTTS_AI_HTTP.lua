@@ -144,7 +144,7 @@ end)
 local function createButton(name, parent, yPos)
     local btn = Instance.new("TextButton")
     btn.Parent = parent
-    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     btn.Position = UDim2.new(0, 10, 0, yPos)
     btn.Size = UDim2.new(0, 200, 0, 35)
     btn.Font = Enum.Font.Gotham
@@ -237,6 +237,19 @@ voiceInputCorner.Parent = voiceInputBox
 local voiceSendBtn = createSimpleButton("Falar", Content1, 40)
 
 local allChatBtn, allChatIndicator = createButton("All Chat TTS", Content1, 85)
+
+-- Background para Fila e New
+local modeBackground = Instance.new("Frame")
+modeBackground.Parent = Content1
+modeBackground.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+modeBackground.Position = UDim2.new(0, 10, 0, 125)
+modeBackground.Size = UDim2.new(0, 200, 0, 40)
+modeBackground.BorderSizePixel = 0
+
+local modeBackgroundCorner = Instance.new("UICorner")
+modeBackgroundCorner.CornerRadius = UDim.new(0, 6)
+modeBackgroundCorner.Parent = modeBackground
+
 local filaBtn, filaIndicator = createModeButton("Fila", Content1, 10, 130)
 local newBtn, newIndicator = createModeButton("New", Content1, 115, 130)
 
@@ -276,6 +289,18 @@ speedHandleCorner.Parent = speedHandle
 -- ABA 2: MÚSICA
 local musicBtn, musicIndicator = createButton("Música YouTube", Content2, 5)
 
+-- Background para elementos de música
+local musicBackground = Instance.new("Frame")
+musicBackground.Parent = Content2
+musicBackground.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+musicBackground.Position = UDim2.new(0, 10, 0, 45)
+musicBackground.Size = UDim2.new(0, 200, 0, 160)
+musicBackground.BorderSizePixel = 0
+
+local musicBackgroundCorner = Instance.new("UICorner")
+musicBackgroundCorner.CornerRadius = UDim.new(0, 6)
+musicBackgroundCorner.Parent = musicBackground
+
 local musicInputBox = Instance.new("TextBox")
 musicInputBox.Parent = Content2
 musicInputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
@@ -306,6 +331,8 @@ local musicPlayCorner = Instance.new("UICorner")
 musicPlayCorner.CornerRadius = UDim.new(0, 6)
 musicPlayCorner.Parent = musicPlayBtn
 
+local playerPermissionBtn, playerPermissionIndicator = createModeButton("Players /play", Content2, 10, 130)
+
 -- Tab System Logic
 tab1.MouseButton1Click:Connect(function()
     Content1.Visible = true
@@ -331,6 +358,7 @@ local musicEnabled = false
 local musicPlaying = false
 local musicSearching = false
 local musicToggling = false
+local playerCanPlay = false
 
 -- Queue System
 local queueMode = true
@@ -680,6 +708,12 @@ musicBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
+playerPermissionBtn.MouseButton1Click:Connect(function()
+    playerCanPlay = not playerCanPlay
+    playerPermissionIndicator.BackgroundColor3 = playerCanPlay and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+    print("[MUSIC] Players podem tocar:", playerCanPlay and "SIM" or "NÃO")
+end)
+
 musicPlayBtn.MouseButton1Click:Connect(function()
     if not musicEnabled then
         print("[MUSIC] Sistema desativado - Ative o botão 'Música YouTube' primeiro (deixe verde)")
@@ -722,10 +756,10 @@ local function setupPlayerChat(plr)
     plr.Chatted:Connect(function(message)
         print("[DEBUG] Player", plr.DisplayName, "falou:", message)
         
-        -- Detecta comando "tocar" (case insensitive)
+        -- Detecta comando "/play" (case insensitive)
         local lowerMsg = string.lower(message)
-        if musicEnabled and string.sub(lowerMsg, 1, 5) == "tocar" then
-            local songName = string.sub(message, 7)  -- Pega do caractere 7 em diante (após "tocar ")
+        if musicEnabled and playerCanPlay and string.sub(lowerMsg, 1, 5) == "/play" then
+            local songName = string.sub(message, 7)  -- Pega do caractere 7 em diante (após "/play ")
             if #songName > 0 then
                 print("[MUSIC] Comando detectado de", plr.DisplayName, ":", songName)
                 musicInputBox.Text = plr.DisplayName .. " tocou: " .. songName

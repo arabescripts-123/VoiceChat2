@@ -49,7 +49,7 @@ Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, -40, 0, 35)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "AS VoiceTTS+AI"
+Title.Text = "AS VoiceTTS"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextSize = 16
 Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -458,16 +458,25 @@ local function processNewMode()
     isPlayingNew = true
     
     task.spawn(function()
-        while #messageQueue > 0 and allChatEnabled and not queueMode do
-            local msg = messageQueue[#messageQueue]
-            messageQueue = {}
-            
-            sendTTS(msg.text, msg.id, "low")
-            
-            local textLength = #msg.text
-            local waitTime = math.max(5, textLength * 0.08)
-            print("[NEW] Aguardando", waitTime, "segundos")
-            task.wait(waitTime)
+        while allChatEnabled and not queueMode do
+            if #messageQueue > 0 then
+                -- Pega a mensagem mais recente
+                local msg = messageQueue[#messageQueue]
+                messageQueue = {}
+                
+                sendTTS(msg.text, msg.id, "low")
+                
+                local textLength = #msg.text
+                local waitTime = math.max(1, textLength * 0.08)
+                print("[NEW] Aguardando", waitTime, "segundos")
+                task.wait(waitTime)
+                
+                -- Aguarda 1 segundo antes de procurar próxima mensagem
+                task.wait(1)
+            else
+                -- Se não há mensagens, aguarda um pouco
+                task.wait(0.5)
+            end
         end
         isPlayingNew = false
     end)
@@ -483,9 +492,12 @@ local function processQueue()
             sendTTS(msg.text, msg.id, "low")
             
             local textLength = #msg.text
-            local waitTime = math.max(5, textLength * 0.08)
+            local waitTime = math.max(1, textLength * 0.08)
             print("[FILA] Aguardando", waitTime, "segundos")
             task.wait(waitTime)
+            
+            -- Aguarda 1 segundo entre mensagens
+            task.wait(1)
         end
         isProcessingQueue = false
     end)
@@ -701,6 +713,14 @@ musicBtn.MouseButton1Click:Connect(function()
     -- Muda visual imediatamente para feedback instantâneo
     musicEnabled = not musicEnabled
     musicIndicator.BackgroundColor3 = musicEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+    
+    -- Se desativar, desativa também Players /play
+    if not musicEnabled then
+        playerCanPlay = false
+        playerPermissionIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+        print("[MUSIC] Players /play desativado automaticamente")
+    end
+    
     print("[MUSIC]", musicEnabled and "ATIVANDO..." or "DESATIVANDO...")
     
     -- Envia para servidor em background

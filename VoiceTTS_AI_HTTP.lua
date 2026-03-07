@@ -144,7 +144,7 @@ end)
 local function createButton(name, parent, yPos)
     local btn = Instance.new("TextButton")
     btn.Parent = parent
-    btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     btn.Position = UDim2.new(0, 10, 0, yPos)
     btn.Size = UDim2.new(0, 200, 0, 35)
     btn.Font = Enum.Font.Gotham

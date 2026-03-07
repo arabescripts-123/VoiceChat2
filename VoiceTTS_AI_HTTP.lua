@@ -339,7 +339,7 @@ playerPermissionBtn.Size = UDim2.new(0, 200, 0, 35)
 playerPermissionBtn.Font = Enum.Font.Gotham
 playerPermissionBtn.Text = "Players /play"
 playerPermissionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-playerPermissionBtn.TextSize = 12
+playerPermissionBtn.TextSize = 13
 
 local playerPermissionCorner = Instance.new("UICorner")
 playerPermissionCorner.CornerRadius = UDim.new(0, 6)
@@ -798,6 +798,11 @@ local function setupPlayerChat(plr)
         end
     end)
 end
+
+rejoinBtn.MouseButton1Click:Connect(function()
+    local TeleportService = game:GetService("TeleportService")
+    TeleportService:Teleport(game.PlaceId, player)
+end)
 
 for _, plr in pairs(game.Players:GetPlayers()) do
     setupPlayerChat(plr)

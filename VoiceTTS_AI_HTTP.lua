@@ -80,8 +80,7 @@ local function createTab(name, pos)
 end
 
 local tab1 = createTab("Chat", 5)
-local tab2 = createTab("Chat IA", 77)
-local tab3 = createTab("Música", 149)
+local tab2 = createTab("Música", 77)
 
 -- Content Frames
 local Content1 = Instance.new("Frame")
@@ -97,13 +96,6 @@ Content2.BackgroundTransparency = 1
 Content2.Position = UDim2.new(0, 0, 0, 70)
 Content2.Size = UDim2.new(1, 0, 1, -70)
 Content2.Visible = false
-
-local Content3 = Instance.new("Frame")
-Content3.Parent = MainFrame
-Content3.BackgroundTransparency = 1
-Content3.Position = UDim2.new(0, 0, 0, 70)
-Content3.Size = UDim2.new(1, 0, 1, -70)
-Content3.Visible = false
 
 local rejoinBtn = Instance.new("TextButton")
 rejoinBtn.Parent = MainFrame
@@ -281,72 +273,11 @@ local speedHandleCorner = Instance.new("UICorner")
 speedHandleCorner.CornerRadius = UDim.new(1, 0)
 speedHandleCorner.Parent = speedHandle
 
--- ABA 2: CHAT IA
-local aiChatBtn, aiChatIndicator = createButton("AI Chat", Content2, 5)
-
-local aiInputBox = Instance.new("TextBox")
-aiInputBox.Parent = Content2
-aiInputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-aiInputBox.Position = UDim2.new(0, 10, 0, 50)
-aiInputBox.Size = UDim2.new(0, 200, 0, 30)
-aiInputBox.Font = Enum.Font.Gotham
-aiInputBox.PlaceholderText = "Pergunte algo..."
-aiInputBox.Text = ""
-aiInputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-aiInputBox.TextSize = 12
-aiInputBox.ClearTextOnFocus = false
-
-local aiInputCorner = Instance.new("UICorner")
-aiInputCorner.CornerRadius = UDim.new(0, 6)
-aiInputCorner.Parent = aiInputBox
-
-local aiSendBtn = Instance.new("TextButton")
-aiSendBtn.Parent = Content2
-aiSendBtn.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
-aiSendBtn.Position = UDim2.new(0, 10, 0, 90)
-aiSendBtn.Size = UDim2.new(0, 200, 0, 30)
-aiSendBtn.Font = Enum.Font.GothamBold
-aiSendBtn.Text = "Enviar para IA"
-aiSendBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-aiSendBtn.TextSize = 13
-
-local aiSendCorner = Instance.new("UICorner")
-aiSendCorner.CornerRadius = UDim.new(0, 6)
-aiSendCorner.Parent = aiSendBtn
-
-local narratorBtn, narratorIndicator = createButton("Narrador Auto", Content2, 135)
-local narratorNowBtn = createSimpleButton("Narrar Agora", Content2, 180)
-
--- Timer do Narrador Auto
-local narratorTimer = Instance.new("TextLabel")
-narratorTimer.Parent = Content2
-narratorTimer.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-narratorTimer.Position = UDim2.new(1, -50, 0, 135)
-narratorTimer.Size = UDim2.new(0, 40, 0, 35)
-narratorTimer.Font = Enum.Font.GothamBold
-narratorTimer.Text = ""
-narratorTimer.TextColor3 = Color3.fromRGB(0, 0, 0)
-narratorTimer.TextSize = 11
-narratorTimer.Visible = false
-
-local narratorTimerCorner = Instance.new("UICorner")
-narratorTimerCorner.CornerRadius = UDim.new(0, 6)
-narratorTimerCorner.Parent = narratorTimer
-
--- Spinner de Loading
-local narratorSpinner = Instance.new("ImageLabel")
-narratorSpinner.Parent = narratorTimer
-narratorSpinner.BackgroundTransparency = 1
-narratorSpinner.Position = UDim2.new(0.5, -12, 0.5, -12)
-narratorSpinner.Size = UDim2.new(0, 24, 0, 24)
-narratorSpinner.Image = "rbxasset://textures/ui/LoadingCircle.png"
-narratorSpinner.Visible = false
-
--- ABA 3: MÚSICA
-local musicBtn, musicIndicator = createButton("Música YouTube", Content3, 5)
+-- ABA 2: MÚSICA
+local musicBtn, musicIndicator = createButton("Música YouTube", Content2, 5)
 
 local musicInputBox = Instance.new("TextBox")
-musicInputBox.Parent = Content3
+musicInputBox.Parent = Content2
 musicInputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 musicInputBox.Position = UDim2.new(0, 10, 0, 50)
 musicInputBox.Size = UDim2.new(0, 200, 0, 30)
@@ -362,7 +293,7 @@ musicInputCorner.CornerRadius = UDim.new(0, 6)
 musicInputCorner.Parent = musicInputBox
 
 local musicPlayBtn = Instance.new("TextButton")
-musicPlayBtn.Parent = Content3
+musicPlayBtn.Parent = Content2
 musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 215, 96)
 musicPlayBtn.Position = UDim2.new(0, 10, 0, 90)
 musicPlayBtn.Size = UDim2.new(0, 200, 0, 30)
@@ -379,37 +310,21 @@ musicPlayCorner.Parent = musicPlayBtn
 tab1.MouseButton1Click:Connect(function()
     Content1.Visible = true
     Content2.Visible = false
-    Content3.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 end)
 
 tab2.MouseButton1Click:Connect(function()
     Content1.Visible = false
     Content2.Visible = true
-    Content3.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab2.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-end)
-
-tab3.MouseButton1Click:Connect(function()
-    Content1.Visible = false
-    Content2.Visible = false
-    Content3.Visible = true
-    tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab3.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 end)
 
 tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 
 -- Variables
 local allChatEnabled = false
-local aiChatEnabled = false
-local aiProcessing = false
-local narratorEnabled = false
 local PROXIMITY_DISTANCE = 50
 local ttsSpeed = 1.0
 local musicEnabled = false
@@ -492,7 +407,7 @@ local function processNewMode()
     isPlayingNew = true
     
     task.spawn(function()
-        while #messageQueue > 0 and allChatEnabled and not queueMode and not aiProcessing do
+        while #messageQueue > 0 and allChatEnabled and not queueMode do
             local msg = messageQueue[#messageQueue]
             messageQueue = {}
             
@@ -502,11 +417,6 @@ local function processNewMode()
             local waitTime = math.max(5, textLength * 0.08)
             print("[NEW] Aguardando", waitTime, "segundos")
             task.wait(waitTime)
-            
-            while aiProcessing do
-                print("[NEW] Pausada - IA falando")
-                task.wait(1)
-            end
         end
         isPlayingNew = false
     end)
@@ -517,7 +427,7 @@ local function processQueue()
     isProcessingQueue = true
     
     task.spawn(function()
-        while #messageQueue > 0 and allChatEnabled and queueMode and not aiProcessing do
+        while #messageQueue > 0 and allChatEnabled and queueMode do
             local msg = table.remove(messageQueue, 1)
             sendTTS(msg.text, msg.id, "low")
             
@@ -525,11 +435,6 @@ local function processQueue()
             local waitTime = math.max(5, textLength * 0.08)
             print("[FILA] Aguardando", waitTime, "segundos")
             task.wait(waitTime)
-            
-            while aiProcessing do
-                print("[FILA] Pausada - IA falando")
-                task.wait(1)
-            end
         end
         isProcessingQueue = false
     end)
@@ -567,67 +472,6 @@ local function handleTTS(text, priority)
         print("[NEW] Substituindo por:", text)
         processNewMode()
     end
-end
-
-local function sendAI(question, playerName)
-    if not aiChatEnabled then
-        print("[AI] Chat desativado")
-        return
-    end
-    
-    -- Para IA anterior se estiver falando
-    if aiProcessing then
-        print("[AI] Interrompendo resposta anterior")
-        task.spawn(function()
-            pcall(function()
-                request({
-                    Url = SERVER_URL .. "/stop",
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode({action = "stop"})
-                })
-            end)
-        end)
-        task.wait(0.3)
-    end
-    
-    aiProcessing = true
-    
-    print("[AI] Limpando fila antiga do All Chat TTS")
-    messageQueue = {}
-    isProcessingQueue = false
-    isPlayingNew = false
-    
-    task.spawn(function()
-        local success, result = pcall(function()
-            local response = request({
-                Url = SERVER_URL .. "/ai",
-                Method = "POST",
-                Headers = {
-                    ["Content-Type"] = "application/json"
-                },
-                Body = HttpService:JSONEncode({question = question, player = playerName, ai_enabled = aiChatEnabled})
-            })
-            return response
-        end)
-        
-        task.wait(2)
-        aiProcessing = false
-        print("[AI] Iniciando nova fila do All Chat TTS")
-        
-        if not success then
-            warn("[AI] Erro:", result)
-        else
-            print("[AI] Resposta enviada")
-            if allChatEnabled then
-                if queueMode then
-                    processQueue()
-                else
-                    processNewMode()
-                end
-            end
-        end
-    end)
 end
 
 local function isPlayerNearby(plr)
@@ -794,140 +638,7 @@ allChatBtn.MouseButton1Click:Connect(function()
     print("[All Chat]", allChatEnabled and "Ativado" or "Desativado")
 end)
 
-aiChatBtn.MouseButton1Click:Connect(function()
-    aiChatEnabled = not aiChatEnabled
-    aiChatIndicator.BackgroundColor3 = aiChatEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-    
-    -- Se desativar AI Chat, para a IA imediatamente
-    if not aiChatEnabled and aiProcessing then
-        aiProcessing = false
-        task.spawn(function()
-            pcall(function()
-                request({
-                    Url = SERVER_URL .. "/stop",
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode({action = "stop"})
-                })
-            end)
-        end)
-        print("[AI] Desativado - Interrompendo fala")
-    end
-    
-    print("[AI]", aiChatEnabled and "Ativado" or "Desativado")
-end)
 
-aiSendBtn.MouseButton1Click:Connect(function()
-    if not aiChatEnabled then
-        print("[AI] Chat desativado - Ative primeiro")
-        return
-    end
-    
-    local question = aiInputBox.Text
-    if question == "" or #question < 2 then
-        print("[AI] Pergunta muito curta")
-        return
-    end
-    
-    print("[AI] Enviando pergunta direta:", question)
-    aiInputBox.Text = ""
-    sendAI(question, player.DisplayName)
-end)
-
-narratorBtn.MouseButton1Click:Connect(function()
-    narratorEnabled = not narratorEnabled
-    narratorIndicator.BackgroundColor3 = narratorEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-    
-    if not narratorEnabled then
-        narratorTimer.Visible = false
-    end
-    
-    task.spawn(function()
-        pcall(function()
-            request({
-                Url = SERVER_URL .. "/narrator",
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = HttpService:JSONEncode({enabled = narratorEnabled, force = true})
-            })
-        end)
-    end)
-    
-    print("[NARRADOR]", narratorEnabled and "Ativado - Narrando a cada 2 minutos (FORÇADO)" or "Desativado")
-end)
-
-narratorNowBtn.MouseButton1Click:Connect(function()
-    print("[NARRADOR] Forçando narração imediata...")
-    task.spawn(function()
-        pcall(function()
-            request({
-                Url = SERVER_URL .. "/narrator/now",
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = HttpService:JSONEncode({force = true})
-            })
-        end)
-    end)
-end)
-
--- Sistema de Timer do Narrador
-task.spawn(function()
-    local spinnerRotation = 0
-    while true do
-        task.wait(0.05)
-        if narratorEnabled then
-            task.spawn(function()
-                local success, response = pcall(function()
-                    return request({
-                        Url = SERVER_URL .. "/narrator/status",
-                        Method = "GET",
-                        Headers = {["Content-Type"] = "application/json"}
-                    })
-                end)
-                
-                if success and response then
-                    local data = HttpService:JSONDecode(response.Body)
-                    if data.loading then
-                        narratorTimer.Visible = true
-                        narratorTimer.Text = ""
-                        narratorSpinner.Visible = true
-                        spinnerRotation = (spinnerRotation + 10) % 360
-                        narratorSpinner.Rotation = spinnerRotation
-                    elseif data.time_remaining and data.time_remaining > 0 then
-                        narratorTimer.Visible = true
-                        narratorSpinner.Visible = false
-                        local minutes = math.floor(data.time_remaining / 60)
-                        local seconds = math.floor(data.time_remaining % 60)
-                        narratorTimer.Text = string.format("%d:%02d", minutes, seconds)
-                    else
-                        narratorTimer.Visible = false
-                        narratorSpinner.Visible = false
-                    end
-                end
-            end)
-        end
-    end
-end)
-
-rejoinBtn.MouseButton1Click:Connect(function()
-    local TeleportService = game:GetService("TeleportService")
-    TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, player)
-end)
-
-infoBtn.MouseButton1Click:Connect(function()
-    print("[INFO] Solicitando informações de uso das APIs...")
-    task.spawn(function()
-        pcall(function()
-            request({
-                Url = SERVER_URL .. "/api/usage",
-                Method = "GET",
-                Headers = {["Content-Type"] = "application/json"}
-            })
-        end)
-    end)
-end)
-
--- Music Button Events
 musicBtn.MouseButton1Click:Connect(function()
     if musicToggling then
         print("[MUSIC] Aguarde...")
@@ -1023,16 +734,7 @@ local function setupPlayerChat(plr)
             end
         end
         
-        local isNearby = isPlayerNearby(plr)
-        local isQuestion = message:sub(-1) == "?"
-        
-        if aiChatEnabled and isNearby and isQuestion then
-            print("[DEBUG] Enviando para IA")
-            sendAI(message, plr.DisplayName)
-            return
-        end
-        
-        if allChatEnabled and not aiProcessing then
+        if allChatEnabled then
             local textToSpeak = plr.DisplayName .. " falou " .. message
             print("[DEBUG] Falando:", textToSpeak)
             handleTTS(textToSpeak, "low")
@@ -1053,5 +755,5 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
-print("[VoiceTTS + AI] Carregado! Z=Menu | Server:", SERVER_URL)
+print("[VoiceTTS] Carregado! Z=Menu | Server:", SERVER_URL)
 

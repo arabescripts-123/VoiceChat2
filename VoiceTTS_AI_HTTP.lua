@@ -386,6 +386,7 @@ local playerCanPlay = false
 -- Queue System
 local queueMode = true
 local messageQueue = {}
+local messageQueueNew = {}
 local isProcessingQueue = false
 local currentTTSId = 0
 local isPlayingNew = false
@@ -459,10 +460,10 @@ local function processNewMode()
     
     task.spawn(function()
         while allChatEnabled and not queueMode do
-            if #messageQueue > 0 then
-                -- Sempre pega a mensagem mais recente e limpa a fila
-                local msg = messageQueue[#messageQueue]
-                messageQueue = {}
+            if #messageQueueNew > 0 then
+                -- Sempre pega a última mensagem e descarta todas as outras
+                local msg = messageQueueNew[#messageQueueNew]
+                messageQueueNew = {}
                 
                 print("[NEW] Lendo mensagem mais recente:", msg.text)
                 sendTTS(msg.text, msg.id, "low")
@@ -510,6 +511,7 @@ local function handleTTS(text, priority)
     if priority == "high" then
         print("[VOICE TTS] Prioridade alta - limpando fila antiga")
         messageQueue = {}
+        messageQueueNew = {}
         isProcessingQueue = false
         isPlayingNew = false
         sendTTS(text, ttsId, "high")
@@ -531,9 +533,9 @@ local function handleTTS(text, priority)
         print("[FILA] Adicionado:", text, "| Total:", #messageQueue)
         processQueue()
     else
-        -- Modo New: adiciona na fila mas o processador pegará apenas a mais recente
-        table.insert(messageQueue, {text = text, id = ttsId})
-        print("[NEW] Nova mensagem adicionada:", text)
+        -- Modo New: usa fila separada
+        table.insert(messageQueueNew, {text = text, id = ttsId})
+        print("[NEW] Nova mensagem adicionada (total:", #messageQueueNew, ")")
         if not isPlayingNew then
             processNewMode()
         end
@@ -663,12 +665,29 @@ end)
 newBtn.MouseButton1Click:Connect(function()
     if queueMode then
         queueMode = false
+        -- Limpa TODAS as filas imediatamente
         messageQueue = {}
+        messageQueueNew = {}
         isProcessingQueue = false
         isPlayingNew = false
         filaIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
         newIndicator.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-        print("[MODO] New ativado - Fila cancelada")
+        print("[MODO] New ativado - Fila cancelada e voz parada")
+        
+        -- Para qualquer áudio que esteja tocando
+        task.spawn(function()
+            pcall(function()
+                request({
+                    Url = SERVER_URL .. "/stop",
+                    Method = "POST",
+                    Headers = {["Content-Type"] = "application/json"},
+                    Body = HttpService:JSONEncode({action = "stop"})
+                })
+            end)
+        end)
+        
+        -- Aguarda um pouco antes de iniciar modo New
+        task.wait(0.3)
         
         -- Inicia modo New
         if allChatEnabled then
@@ -687,13 +706,16 @@ allChatBtn.MouseButton1Click:Connect(function()
         newIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
         print("[All Chat] Ativado - Iniciando fila nova")
     else
+        -- Limpa filas imediatamente
         messageQueue = {}
+        messageQueueNew = {}
         isProcessingQueue = false
         isPlayingNew = false
         filaIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
         newIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        print("[All Chat] Desativado - Parando voz instantaneamente")
+        print("[All Chat] Desativado - Parando voz IMEDIATAMENTE")
         
+        -- Para o áudio instantaneamente no servidor
         task.spawn(function()
             pcall(function()
                 request({
@@ -722,11 +744,17 @@ musicBtn.MouseButton1Click:Connect(function()
     musicEnabled = not musicEnabled
     musicIndicator.BackgroundColor3 = musicEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
     
-    -- Se desativar, desativa também Players /play
+    -- Se desativar, para a música imediatamente e desativa Players /play
     if not musicEnabled then
         playerCanPlay = false
         playerPermissionIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+        musicPlaying = false
+        musicSearching = false
+        musicPlayBtn.Text = "Tocar"
+        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 215, 96)
         print("[MUSIC] Players /play desativado automaticamente")
+        print("[MUSIC] Parando música imediatamente")
+        stopMusic()
     end
     
     print("[MUSIC]", musicEnabled and "ATIVANDO..." or "DESATIVANDO...")

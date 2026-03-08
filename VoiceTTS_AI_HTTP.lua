@@ -81,6 +81,7 @@ end
 
 local tab1 = createTab("Chat", 5)
 local tab2 = createTab("Música", 77)
+local tab3 = createTab("Player", 149)
 
 -- Content Frames
 local Content1 = Instance.new("Frame")
@@ -96,6 +97,13 @@ Content2.BackgroundTransparency = 1
 Content2.Position = UDim2.new(0, 0, 0, 70)
 Content2.Size = UDim2.new(1, 0, 1, -70)
 Content2.Visible = false
+
+local Content3 = Instance.new("Frame")
+Content3.Parent = MainFrame
+Content3.BackgroundTransparency = 1
+Content3.Position = UDim2.new(0, 0, 0, 70)
+Content3.Size = UDim2.new(1, 0, 1, -70)
+Content3.Visible = false
 
 local rejoinBtn = Instance.new("TextButton")
 rejoinBtn.Parent = MainFrame
@@ -356,19 +364,272 @@ local playerPermissionIndicatorCorner = Instance.new("UICorner")
 playerPermissionIndicatorCorner.CornerRadius = UDim.new(1, 0)
 playerPermissionIndicatorCorner.Parent = playerPermissionIndicator
 
+-- ABA 3: PLAYER
+local RunService = game:GetService("RunService")
+local flying, flySpeed, bodyVelocity, bodyGyro = false, 65, nil, nil
+local speedEnabled, walkSpeed = false, 65
+local jumpEnabled, jumpPower = false, 100
+
+local function createValueBox(parent, yPos, text)
+    local box = Instance.new("TextBox")
+    box.Parent = parent
+    box.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    box.Position = UDim2.new(0, 165, 0, yPos)
+    box.Size = UDim2.new(0, 45, 0, 35)
+    box.Font = Enum.Font.Gotham
+    box.Text = text
+    box.TextColor3 = Color3.fromRGB(255, 255, 255)
+    box.TextSize = 12
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = box
+    return box
+end
+
+local flyBtn, flyIndicator = createButton("Fly", Content3, 5)
+local flySpeedBox = createValueBox(Content3, 5, "65")
+
+local speedBtn, speedIndicator = createButton("Speed", Content3, 50)
+local speedBox = createValueBox(Content3, 50, "65")
+
+local jumpBtn, jumpIndicator = createButton("SuperJump", Content3, 95)
+local jumpBox = createValueBox(Content3, 95, "100")
+
+local tpBtn = Instance.new("TextButton")
+tpBtn.Parent = Content3
+tpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+tpBtn.Position = UDim2.new(0, 10, 0, 140)
+tpBtn.Size = UDim2.new(0, 200, 0, 35)
+tpBtn.Font = Enum.Font.Gotham
+tpBtn.Text = "TP Players ▼"
+tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+tpBtn.TextSize = 13
+local tpCorner = Instance.new("UICorner")
+tpCorner.CornerRadius = UDim.new(0, 6)
+tpCorner.Parent = tpBtn
+
+local PlayerListFrame = Instance.new("Frame")
+PlayerListFrame.Parent = ScreenGui
+PlayerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+PlayerListFrame.Position = UDim2.new(0.02, 0, 0.3, 410)
+PlayerListFrame.Size = UDim2.new(0, 220, 0, 200)
+PlayerListFrame.Visible = false
+local listCorner = Instance.new("UICorner")
+listCorner.CornerRadius = UDim.new(0, 8)
+listCorner.Parent = PlayerListFrame
+local listStroke = Instance.new("UIStroke")
+listStroke.Parent = PlayerListFrame
+listStroke.Color = Color3.fromRGB(0, 0, 0)
+listStroke.Thickness = 3
+
+local PlayerListScroll = Instance.new("ScrollingFrame")
+PlayerListScroll.Parent = PlayerListFrame
+PlayerListScroll.BackgroundTransparency = 1
+PlayerListScroll.Size = UDim2.new(1, 0, 1, 0)
+PlayerListScroll.ScrollBarThickness = 4
+PlayerListScroll.BorderSizePixel = 0
+
+local function startFly()
+    flying = true
+    pcall(function()
+        local root = player.Character:FindFirstChild("HumanoidRootPart")
+        local humanoid = player.Character:FindFirstChild("Humanoid")
+        if not root or not humanoid then return end
+        humanoid.PlatformStand = true
+        bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.Velocity = Vector3.zero
+        bodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+        bodyVelocity.Parent = root
+        bodyGyro = Instance.new("BodyGyro")
+        bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+        bodyGyro.CFrame = root.CFrame
+        bodyGyro.Parent = root
+    end)
+end
+
+local function stopFly()
+    flying = false
+    pcall(function()
+        if bodyVelocity then bodyVelocity:Destroy() bodyVelocity = nil end
+        if bodyGyro then bodyGyro:Destroy() bodyGyro = nil end
+        if player.Character then
+            local humanoid = player.Character:FindFirstChild("Humanoid")
+            if humanoid then humanoid.PlatformStand = false end
+        end
+    end)
+end
+
+RunService.Heartbeat:Connect(function()
+    if not flying or not player.Character then return end
+    pcall(function()
+        local root = player.Character:FindFirstChild("HumanoidRootPart")
+        if not root or not bodyVelocity then return end
+        local cam = workspace.CurrentCamera
+        local moveDir = Vector3.zero
+        if UIS:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
+        if UIS:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.CFrame.LookVector end
+        if UIS:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.CFrame.RightVector end
+        if UIS:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
+        if UIS:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0,1,0) end
+        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir = moveDir - Vector3.new(0,1,0) end
+        bodyVelocity.Velocity = moveDir.Magnitude > 0 and moveDir.Unit * flySpeed or Vector3.zero
+        bodyGyro.CFrame = cam.CFrame
+    end)
+end)
+
+local function updateSpeed()
+    pcall(function()
+        if player.Character then
+            local humanoid = player.Character:FindFirstChild("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = speedEnabled and walkSpeed or 16
+            end
+        end
+    end)
+end
+
+local function updateJump()
+    pcall(function()
+        if player.Character then
+            local humanoid = player.Character:FindFirstChild("Humanoid")
+            if humanoid then
+                humanoid.JumpPower = jumpEnabled and jumpPower or 50
+            end
+        end
+    end)
+end
+
+local function updatePlayerList()
+    for _, child in pairs(PlayerListScroll:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+    local yPos = 0
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        if plr ~= player then
+            local frame = Instance.new("Frame")
+            frame.Parent = PlayerListScroll
+            frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            frame.Position = UDim2.new(0, 5, 0, yPos)
+            frame.Size = UDim2.new(1, -10, 0, 40)
+            local corner = Instance.new("UICorner")
+            corner.CornerRadius = UDim.new(0, 6)
+            corner.Parent = frame
+            local label = Instance.new("TextLabel")
+            label.Parent = frame
+            label.BackgroundTransparency = 1
+            label.Size = UDim2.new(1, 0, 1, 0)
+            label.Font = Enum.Font.Gotham
+            label.Text = plr.Name
+            label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            label.TextSize = 12
+            local btn = Instance.new("TextButton")
+            btn.Parent = frame
+            btn.BackgroundTransparency = 1
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.Text = ""
+            btn.MouseButton1Click:Connect(function()
+                pcall(function()
+                    if player.Character and plr.Character then
+                        local root = player.Character:FindFirstChild("HumanoidRootPart")
+                        local targetRoot = plr.Character:FindFirstChild("HumanoidRootPart")
+                        if root and targetRoot then
+                            root.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 3)
+                        end
+                    end
+                end)
+                PlayerListFrame.Visible = false
+            end)
+            yPos = yPos + 45
+        end
+    end
+    PlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, yPos)
+end
+
+flyBtn.MouseButton1Click:Connect(function()
+    flying = not flying
+    if flying then startFly() else stopFly() end
+    flyIndicator.BackgroundColor3 = flying and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
+speedBtn.MouseButton1Click:Connect(function()
+    speedEnabled = not speedEnabled
+    updateSpeed()
+    speedIndicator.BackgroundColor3 = speedEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
+jumpBtn.MouseButton1Click:Connect(function()
+    jumpEnabled = not jumpEnabled
+    updateJump()
+    jumpIndicator.BackgroundColor3 = jumpEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
+tpBtn.MouseButton1Click:Connect(function()
+    PlayerListFrame.Visible = not PlayerListFrame.Visible
+    if PlayerListFrame.Visible then updatePlayerList() end
+end)
+
+flySpeedBox.FocusLost:Connect(function()
+    local value = tonumber(flySpeedBox.Text)
+    if value and value >= 1 and value <= 500 then
+        flySpeed = value
+    else
+        flySpeedBox.Text = tostring(flySpeed)
+    end
+end)
+
+speedBox.FocusLost:Connect(function()
+    local value = tonumber(speedBox.Text)
+    if value and value >= 1 and value <= 500 then
+        walkSpeed = value
+        updateSpeed()
+    else
+        speedBox.Text = tostring(walkSpeed)
+    end
+end)
+
+jumpBox.FocusLost:Connect(function()
+    local value = tonumber(jumpBox.Text)
+    if value and value >= 1 and value <= 500 then
+        jumpPower = value
+        updateJump()
+    else
+        jumpBox.Text = tostring(jumpPower)
+    end
+end)
+
+player.CharacterAdded:Connect(function()
+    task.wait(0.5)
+    if speedEnabled then updateSpeed() end
+    if jumpEnabled then updateJump() end
+    if flying then startFly() end
+end)
+
 -- Tab System Logic
 tab1.MouseButton1Click:Connect(function()
     Content1.Visible = true
     Content2.Visible = false
+    Content3.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 end)
 
 tab2.MouseButton1Click:Connect(function()
     Content1.Visible = false
     Content2.Visible = true
+    Content3.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab2.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+end)
+
+tab3.MouseButton1Click:Connect(function()
+    Content1.Visible = false
+    Content2.Visible = false
+    Content3.Visible = true
+    tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab3.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 end)
 
 tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)

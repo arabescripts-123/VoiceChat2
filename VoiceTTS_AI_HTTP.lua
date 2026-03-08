@@ -414,8 +414,8 @@ clickTpBtn.Parent = Content3
 clickTpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 clickTpBtn.Position = UDim2.new(0, 180, 0, 140)
 clickTpBtn.Size = UDim2.new(0, 30, 0, 35)
-clickTpBtn.Text = ""
-clickTpBtn.Font = Enum.Font.Gotham
+clickTpBtn.Text = "Q"
+clickTpBtn.Font = Enum.Font.GothamBold
 clickTpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 clickTpBtn.TextSize = 14
 local clickTpCorner = Instance.new("UICorner")
@@ -425,18 +425,18 @@ clickTpCorner.Parent = clickTpBtn
 local clickTpIndicator = Instance.new("Frame")
 clickTpIndicator.Parent = clickTpBtn
 clickTpIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-clickTpIndicator.Position = UDim2.new(0.5, -8, 0.5, -8)
-clickTpIndicator.Size = UDim2.new(0, 16, 0, 16)
+clickTpIndicator.Position = UDim2.new(1, -10, 0, 3)
+clickTpIndicator.Size = UDim2.new(0, 8, 0, 8)
 clickTpIndicator.BorderSizePixel = 0
 local clickTpIndicatorCorner = Instance.new("UICorner")
 clickTpIndicatorCorner.CornerRadius = UDim.new(1, 0)
 clickTpIndicatorCorner.Parent = clickTpIndicator
 
 local PlayerListFrame = Instance.new("Frame")
-PlayerListFrame.Parent = ScreenGui
+PlayerListFrame.Parent = Content3
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-PlayerListFrame.Position = UDim2.new(0.02, 0, 0.3, 410)
-PlayerListFrame.Size = UDim2.new(0, 220, 0, 200)
+PlayerListFrame.Position = UDim2.new(0, 10, 0, 180)
+PlayerListFrame.Size = UDim2.new(0, 200, 0, 150)
 PlayerListFrame.Visible = false
 local listCorner = Instance.new("UICorner")
 listCorner.CornerRadius = UDim.new(0, 8)
@@ -538,14 +538,28 @@ local function updatePlayerList()
             local corner = Instance.new("UICorner")
             corner.CornerRadius = UDim.new(0, 6)
             corner.Parent = frame
+            
+            local img = Instance.new("ImageLabel")
+            img.Parent = frame
+            img.BackgroundTransparency = 1
+            img.Position = UDim2.new(0, 5, 0.5, -15)
+            img.Size = UDim2.new(0, 30, 0, 30)
+            img.Image = "https://www.roblox.com/headshot-thumbnail/image?userId="..plr.UserId.."&width=48&height=48&format=png"
+            local imgCorner = Instance.new("UICorner")
+            imgCorner.CornerRadius = UDim.new(1, 0)
+            imgCorner.Parent = img
+            
             local label = Instance.new("TextLabel")
             label.Parent = frame
             label.BackgroundTransparency = 1
-            label.Size = UDim2.new(1, 0, 1, 0)
+            label.Position = UDim2.new(0, 40, 0, 0)
+            label.Size = UDim2.new(1, -45, 1, 0)
             label.Font = Enum.Font.Gotham
             label.Text = plr.Name
             label.TextColor3 = Color3.fromRGB(255, 255, 255)
             label.TextSize = 12
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            
             local btn = Instance.new("TextButton")
             btn.Parent = frame
             btn.BackgroundTransparency = 1

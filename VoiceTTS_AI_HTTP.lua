@@ -369,6 +369,7 @@ local RunService = game:GetService("RunService")
 local flying, flySpeed, bodyVelocity, bodyGyro = false, 65, nil, nil
 local speedEnabled, walkSpeed = false, 65
 local jumpEnabled, jumpPower = false, 100
+local clickTpEnabled = false
 
 local function createValueBox(parent, yPos, text)
     local box = Instance.new("TextBox")
@@ -399,7 +400,7 @@ local tpBtn = Instance.new("TextButton")
 tpBtn.Parent = Content3
 tpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 tpBtn.Position = UDim2.new(0, 10, 0, 140)
-tpBtn.Size = UDim2.new(0, 200, 0, 35)
+tpBtn.Size = UDim2.new(0, 165, 0, 35)
 tpBtn.Font = Enum.Font.Gotham
 tpBtn.Text = "TP Players ▼"
 tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -407,6 +408,29 @@ tpBtn.TextSize = 13
 local tpCorner = Instance.new("UICorner")
 tpCorner.CornerRadius = UDim.new(0, 6)
 tpCorner.Parent = tpBtn
+
+local clickTpBtn = Instance.new("TextButton")
+clickTpBtn.Parent = Content3
+clickTpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+clickTpBtn.Position = UDim2.new(0, 180, 0, 140)
+clickTpBtn.Size = UDim2.new(0, 30, 0, 35)
+clickTpBtn.Text = ""
+clickTpBtn.Font = Enum.Font.Gotham
+clickTpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+clickTpBtn.TextSize = 14
+local clickTpCorner = Instance.new("UICorner")
+clickTpCorner.CornerRadius = UDim.new(0, 6)
+clickTpCorner.Parent = clickTpBtn
+
+local clickTpIndicator = Instance.new("Frame")
+clickTpIndicator.Parent = clickTpBtn
+clickTpIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+clickTpIndicator.Position = UDim2.new(0.5, -8, 0.5, -8)
+clickTpIndicator.Size = UDim2.new(0, 16, 0, 16)
+clickTpIndicator.BorderSizePixel = 0
+local clickTpIndicatorCorner = Instance.new("UICorner")
+clickTpIndicatorCorner.CornerRadius = UDim.new(1, 0)
+clickTpIndicatorCorner.Parent = clickTpIndicator
 
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Parent = ScreenGui
@@ -568,12 +592,18 @@ tpBtn.MouseButton1Click:Connect(function()
     if PlayerListFrame.Visible then updatePlayerList() end
 end)
 
+clickTpBtn.MouseButton1Click:Connect(function()
+    clickTpEnabled = not clickTpEnabled
+    clickTpIndicator.BackgroundColor3 = clickTpEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
 flySpeedBox.FocusLost:Connect(function()
     local value = tonumber(flySpeedBox.Text)
     if value and value >= 1 and value <= 500 then
         flySpeed = value
     else
-        flySpeedBox.Text = tostring(flySpeed)
+        flySpeed = 65
+        flySpeedBox.Text = "65"
     end
 end)
 
@@ -583,7 +613,9 @@ speedBox.FocusLost:Connect(function()
         walkSpeed = value
         updateSpeed()
     else
-        speedBox.Text = tostring(walkSpeed)
+        walkSpeed = 65
+        speedBox.Text = "65"
+        updateSpeed()
     end
 end)
 
@@ -593,7 +625,9 @@ jumpBox.FocusLost:Connect(function()
         jumpPower = value
         updateJump()
     else
-        jumpBox.Text = tostring(jumpPower)
+        jumpPower = 100
+        jumpBox.Text = "100"
+        updateJump()
     end
 end)
 
@@ -1131,6 +1165,16 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     if input.KeyCode == Enum.KeyCode.Z then
         MainFrame.Visible = not MainFrame.Visible
+    elseif input.KeyCode == Enum.KeyCode.Q and clickTpEnabled then
+        pcall(function()
+            if not player.Character then return end
+            local root = player.Character:FindFirstChild("HumanoidRootPart")
+            if not root then return end
+            local mouse = player:GetMouse()
+            if mouse.Target then
+                root.CFrame = CFrame.new(mouse.Hit.Position + Vector3.new(0, 3, 0))
+            end
+        end)
     end
 end)
 

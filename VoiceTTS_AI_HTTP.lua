@@ -399,6 +399,8 @@ local God = {
     Enabled = false,
     HealThresh = 60,
     BaseMaxHP = 200,
+    BaseWalk = 20,
+    BaseJump = 60,
     AntiFall = true,
     HeartbeatCon = nil,
     HealthCon = nil
@@ -413,6 +415,8 @@ end
 
 local function applyHPStats(h)
     if not h then return end
+    h.WalkSpeed = God.BaseWalk
+    h.JumpPower = God.BaseJump
     h.MaxHealth = God.BaseMaxHP
     local th = h.MaxHealth * (God.HealThresh / 100)
     if h.Health < th then
@@ -487,19 +491,28 @@ RunService.Heartbeat:Connect(function()
     end)
 end)
 
--- Noclip automático apenas com players
+-- Noclip automático apenas com players (não com objetos)
 RunService.Stepped:Connect(function()
     pcall(function()
         if not player.Character then return end
-        for _, part in ipairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
-                    if otherPlayer ~= player and otherPlayer.Character then
-                        local otherRoot = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
-                        if otherRoot and (part.Position - otherRoot.Position).Magnitude < 10 then
-                            part.CanCollide = false
-                        end
-                    end
+        local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
+        if not myRoot then return end
+        
+        local nearPlayer = false
+        for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
+            if otherPlayer ~= player and otherPlayer.Character then
+                local otherRoot = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 10 then
+                    nearPlayer = true
+                    break
+                end
+            end
+        end
+        
+        if nearPlayer then
+            for _, part in ipairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
                 end
             end
         end
@@ -1065,6 +1078,8 @@ end)
 UIS.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         speedDragging = false
+        healDragging = false
+        hpDragging = false
     end
 end)
 

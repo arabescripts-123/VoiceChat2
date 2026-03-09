@@ -1291,7 +1291,14 @@ end
 
 rejoinBtn.MouseButton1Click:Connect(function()
     local TeleportService = game:GetService("TeleportService")
-    TeleportService:Teleport(game.PlaceId, player)
+    local success, jobId = pcall(function()
+        return game.JobId
+    end)
+    if success and jobId and jobId ~= "" then
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId, player)
+    else
+        TeleportService:Teleport(game.PlaceId, player)
+    end
 end)
 
 for _, plr in pairs(game.Players:GetPlayers()) do

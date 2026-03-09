@@ -377,12 +377,14 @@ local jumpEnabled, jumpPower = false, 100
 local clickTpEnabled = false
 local freezeEnabled = false
 local frozenCFrame = nil
+local noclipEnabled = false
 
 -- Sistema de Telecinese
 local telekinesisEnabled = false
 local telekinesisObject = nil
 local telekinesisBodyPosition = nil
 local telekinesisBodyGyro = nil
+local telekinesisHighlight = nil
 
 -- Anti-Fling automático (proteção contra toque com players)
 local MaxVel = 120
@@ -478,12 +480,14 @@ local jumpBox = createValueBox(Content3, 95, "100")
 
 local freezeBtn, freezeIndicator = createButton("Congelar Posição", Content3, 140)
 
+local noclipBtn, noclipIndicator = createButton("Noclip", Content3, 185)
+
 local telekinesisBtn, telekinesisIndicator = createButton("Telecinese", Content3, 230)
 
 local tpBtn = Instance.new("TextButton")
 tpBtn.Parent = Content3
 tpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-tpBtn.Position = UDim2.new(0, 10, 0, 185)
+tpBtn.Position = UDim2.new(0, 10, 0, 275)
 tpBtn.Size = UDim2.new(0, 165, 0, 35)
 tpBtn.Font = Enum.Font.Gotham
 tpBtn.Text = "TP Players ▼"
@@ -496,7 +500,7 @@ tpCorner.Parent = tpBtn
 local clickTpBtn = Instance.new("TextButton")
 clickTpBtn.Parent = Content3
 clickTpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-clickTpBtn.Position = UDim2.new(0, 180, 0, 185)
+clickTpBtn.Position = UDim2.new(0, 180, 0, 275)
 clickTpBtn.Size = UDim2.new(0, 30, 0, 35)
 clickTpBtn.Text = "Q"
 clickTpBtn.Font = Enum.Font.GothamBold
@@ -519,7 +523,7 @@ clickTpIndicatorCorner.Parent = clickTpIndicator
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Parent = Content3
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-PlayerListFrame.Position = UDim2.new(0, 10, 0, 225)
+PlayerListFrame.Position = UDim2.new(0, 10, 0, 315)
 PlayerListFrame.Size = UDim2.new(0, 200, 0, 60)
 PlayerListFrame.Visible = false
 local listCorner = Instance.new("UICorner")
@@ -694,13 +698,21 @@ freezeBtn.MouseButton1Click:Connect(function()
     freezeIndicator.BackgroundColor3 = freezeEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
 end)
 
+noclipBtn.MouseButton1Click:Connect(function()
+    noclipEnabled = not noclipEnabled
+    noclipIndicator.BackgroundColor3 = noclipEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
 telekinesisBtn.MouseButton1Click:Connect(function()
     telekinesisEnabled = not telekinesisEnabled
     telekinesisIndicator.BackgroundColor3 = telekinesisEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-    if not telekinesisEnabled and telekinesisObject then
-        if telekinesisBodyPosition then telekinesisBodyPosition:Destroy() telekinesisBodyPosition = nil end
-        if telekinesisBodyGyro then telekinesisBodyGyro:Destroy() telekinesisBodyGyro = nil end
-        telekinesisObject = nil
+    if not telekinesisEnabled then
+        if telekinesisObject then
+            if telekinesisBodyPosition then telekinesisBodyPosition:Destroy() telekinesisBodyPosition = nil end
+            if telekinesisBodyGyro then telekinesisBodyGyro:Destroy() telekinesisBodyGyro = nil end
+            if telekinesisHighlight then telekinesisHighlight:Destroy() telekinesisHighlight = nil end
+            telekinesisObject = nil
+        end
     end
 end)
 
@@ -715,13 +727,35 @@ RunService.Heartbeat:Connect(function()
         end)
     end
     
-    if telekinesisEnabled and telekinesisObject and telekinesisBodyPosition then
+    if telekinesisEnabled and telekinesisObject then
         pcall(function()
-            local mouse = player:GetMouse()
-            local cam = workspace.CurrentCamera
-            local mouseRay = cam:ScreenPointToRay(mouse.X, mouse.Y)
-            local targetPos = mouseRay.Origin + mouseRay.Direction * 15
-            telekinesisBodyPosition.Position = targetPos
+            if not telekinesisObject.Parent or telekinesisObject.Anchored then
+                if telekinesisBodyPosition then telekinesisBodyPosition:Destroy() telekinesisBodyPosition = nil end
+                if telekinesisBodyGyro then telekinesisBodyGyro:Destroy() telekinesisBodyGyro = nil end
+                if telekinesisHighlight then telekinesisHighlight:Destroy() telekinesisHighlight = nil end
+                telekinesisObject = nil
+                return
+            end
+            
+            if telekinesisBodyPosition then
+                local mouse = player:GetMouse()
+                local cam = workspace.CurrentCamera
+                local mouseRay = cam:ScreenPointToRay(mouse.X, mouse.Y)
+                local targetPos = mouseRay.Origin + mouseRay.Direction * 15
+                telekinesisBodyPosition.Position = targetPos
+            end
+        end)
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    if noclipEnabled and player.Character then
+        pcall(function()
+            for _, part in ipairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
         end)
     end
 end)
@@ -1334,12 +1368,11 @@ mouse.Button1Down:Connect(function()
     
     pcall(function()
         if telekinesisObject then
-            -- Soltar objeto
             if telekinesisBodyPosition then telekinesisBodyPosition:Destroy() telekinesisBodyPosition = nil end
             if telekinesisBodyGyro then telekinesisBodyGyro:Destroy() telekinesisBodyGyro = nil end
+            if telekinesisHighlight then telekinesisHighlight:Destroy() telekinesisHighlight = nil end
             telekinesisObject = nil
         else
-            -- Pegar objeto
             local target = mouse.Target
             if target and target:IsA("BasePart") and not target.Anchored then
                 if not target:IsDescendantOf(player.Character) then
@@ -1357,6 +1390,14 @@ mouse.Button1Down:Connect(function()
                     telekinesisBodyGyro.P = 3000
                     telekinesisBodyGyro.CFrame = target.CFrame
                     telekinesisBodyGyro.Parent = target
+                    
+                    telekinesisHighlight = Instance.new("Highlight")
+                    telekinesisHighlight.FillColor = Color3.fromRGB(0, 150, 255)
+                    telekinesisHighlight.FillTransparency = 0.5
+                    telekinesisHighlight.OutlineColor = Color3.fromRGB(0, 100, 255)
+                    telekinesisHighlight.OutlineTransparency = 0
+                    telekinesisHighlight.Adornee = target
+                    telekinesisHighlight.Parent = target
                 end
             end
         end

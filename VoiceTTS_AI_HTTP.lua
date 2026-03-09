@@ -1,4 +1,4 @@
--- Voice TTS + AI Chat (HTTP Version)
+--[[ -- Voice TTS + AI Chat (HTTP Version)
 print("[VoiceTTS] Iniciando...")
 
 local player = game.Players.LocalPlayer
@@ -86,7 +86,7 @@ end
 local tab1 = createTab("Chat", 5)
 local tab2 = createTab("Música", 77)
 local tab3 = createTab("Player", 149)
-local tab4 = createTab("Trol", 221)
+local tab4 = createTab("Others", 221)
 
 -- Content Frames
 local Content1 = Instance.new("Frame")
@@ -376,205 +376,35 @@ local playerPermissionIndicatorCorner = Instance.new("UICorner")
 playerPermissionIndicatorCorner.CornerRadius = UDim.new(1, 0)
 playerPermissionIndicatorCorner.Parent = playerPermissionIndicator
 
--- ABA 4: TROL (declarações iniciais)
-local trollPlayerEnabled = false
-local selectedTrollTarget = nil
-local savedPosition = nil
-local trollConnection = nil
-local origTrans = {}
-local origName = {}
+-- ABA 4: OTHERS
+local duplicateBtn = createSimpleButton("Duplicar Item", Content4, 5)
 
--- Função setInvisibility (precisa estar antes das funções de troll)
-local function setInvisibility(enabled)
+duplicateBtn.MouseButton1Click:Connect(function()
     pcall(function()
         local char = player.Character
-        if not char then return end
-        
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-            if enabled then
-                origName[hum] = { hum.DisplayDistanceType, hum.NameDisplayDistance }
-                hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-                hum.NameDisplayDistance = 0
-            elseif origName[hum] then
-                hum.DisplayDistanceType = origName[hum][1]
-                hum.NameDisplayDistance = origName[hum][2]
-            end
+        if not char then 
+            print("[DUPLICATE] Personagem não encontrado")
+            return 
         end
         
-        for _, o in ipairs(char:GetDescendants()) do
-            if o:IsA("BasePart") or o:IsA("Decal") or o:IsA("Texture") or o:IsA("MeshPart") then
-                if enabled then
-                    if origTrans[o] == nil then
-                        origTrans[o] = o.Transparency
-                    end
-                    o.Transparency = 1
-                else
-                    if origTrans[o] ~= nil then
-                        o.Transparency = origTrans[o]
-                    end
-                end
-            end
+        local tool = char:FindFirstChildOfClass("Tool")
+        if not tool then
+            print("[DUPLICATE] Nenhum item na mão")
+            return
         end
         
-        if not enabled then
-            origTrans = {}
+        local backpack = player:FindFirstChild("Backpack")
+        if not backpack then
+            print("[DUPLICATE] Backpack não encontrado")
+            return
         end
+        
+        -- Clona o item
+        local clonedTool = tool:Clone()
+        clonedTool.Parent = backpack
+        
+        print("[DUPLICATE] Item duplicado:", tool.Name)
     end)
-end
-
-local trollBtn, trollIndicator = createButton("TrolPlayer", Content4, 5)
-
-local TrollPlayerListFrame = Instance.new("Frame")
-TrollPlayerListFrame.Parent = Content4
-TrollPlayerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-TrollPlayerListFrame.Position = UDim2.new(0, 10, 0, 50)
-TrollPlayerListFrame.Size = UDim2.new(0, 200, 0, 280)
-TrollPlayerListFrame.Visible = false
-local trollListCorner = Instance.new("UICorner")
-trollListCorner.CornerRadius = UDim.new(0, 8)
-trollListCorner.Parent = TrollPlayerListFrame
-local trollListStroke = Instance.new("UIStroke")
-trollListStroke.Parent = TrollPlayerListFrame
-trollListStroke.Color = Color3.fromRGB(0, 0, 0)
-trollListStroke.Thickness = 3
-
-local TrollPlayerListScroll = Instance.new("ScrollingFrame")
-TrollPlayerListScroll.Parent = TrollPlayerListFrame
-TrollPlayerListScroll.BackgroundTransparency = 1
-TrollPlayerListScroll.Size = UDim2.new(1, 0, 1, 0)
-TrollPlayerListScroll.ScrollBarThickness = 4
-TrollPlayerListScroll.BorderSizePixel = 0
-
-local function stopTrolling()
-    print("[TROL] Parando troll...")
-    if trollConnection then
-        trollConnection:Disconnect()
-        trollConnection = nil
-    end
-    
-    if player.Character then
-        setInvisibility(false)
-        if savedPosition and player.Character:FindFirstChild("HumanoidRootPart") then
-            player.Character.HumanoidRootPart.CFrame = savedPosition
-        end
-    end
-    
-    selectedTrollTarget = nil
-    savedPosition = nil
-end
-
-local function startTrolling(targetPlayer)
-    print("[TROL] Iniciando troll em", targetPlayer.Name)
-    if not targetPlayer or not targetPlayer.Character then return end
-    
-    stopTrolling()
-    
-    selectedTrollTarget = targetPlayer
-    
-    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        savedPosition = player.Character.HumanoidRootPart.CFrame
-        print("[TROL] Posição salva:", savedPosition)
-    end
-    
-    setInvisibility(true)
-    print("[TROL] Invisibilidade ativada")
-    
-    trollConnection = game:GetService("RunService").Heartbeat:Connect(function()
-        pcall(function()
-            if not trollPlayerEnabled or not selectedTrollTarget or not selectedTrollTarget.Character then
-                stopTrolling()
-                return
-            end
-            
-            local targetRoot = selectedTrollTarget.Character:FindFirstChild("HumanoidRootPart")
-            local myRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-            
-            if targetRoot and myRoot then
-                myRoot.CFrame = targetRoot.CFrame
-                myRoot.Velocity = Vector3.zero
-            end
-        end)
-    end)
-end
-
-local function updateTrollPlayerList()
-    for _, child in pairs(TrollPlayerListScroll:GetChildren()) do
-        if child:IsA("Frame") then child:Destroy() end
-    end
-    local yPos = 0
-    for _, plr in pairs(game.Players:GetPlayers()) do
-        if plr ~= player then
-            local frame = Instance.new("Frame")
-            frame.Parent = TrollPlayerListScroll
-            frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            frame.Position = UDim2.new(0, 5, 0, yPos)
-            frame.Size = UDim2.new(1, -10, 0, 50)
-            local corner = Instance.new("UICorner")
-            corner.CornerRadius = UDim.new(0, 6)
-            corner.Parent = frame
-            
-            local img = Instance.new("ImageLabel")
-            img.Parent = frame
-            img.BackgroundTransparency = 1
-            img.Position = UDim2.new(0, 5, 0.5, -20)
-            img.Size = UDim2.new(0, 40, 0, 40)
-            img.Image = "rbxthumb://type=AvatarHeadShot&id="..plr.UserId.."&w=150&h=150"
-            local imgCorner = Instance.new("UICorner")
-            imgCorner.CornerRadius = UDim.new(1, 0)
-            imgCorner.Parent = img
-            
-            local label = Instance.new("TextLabel")
-            label.Parent = frame
-            label.BackgroundTransparency = 1
-            label.Position = UDim2.new(0, 50, 0, 0)
-            label.Size = UDim2.new(1, -55, 1, 0)
-            label.Font = Enum.Font.Gotham
-            label.Text = plr.Name
-            label.TextColor3 = Color3.fromRGB(255, 255, 255)
-            label.TextSize = 12
-            label.TextXAlignment = Enum.TextXAlignment.Left
-            
-            if selectedTrollTarget == plr then
-                frame.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-            end
-            
-            local btn = Instance.new("TextButton")
-            btn.Parent = frame
-            btn.BackgroundTransparency = 1
-            btn.Size = UDim2.new(1, 0, 1, 0)
-            btn.Text = ""
-            btn.MouseButton1Click:Connect(function()
-                print("[TROL] Clicou em", plr.Name)
-                if trollPlayerEnabled then
-                    if selectedTrollTarget == plr then
-                        print("[TROL] Deselecionando player")
-                        stopTrolling()
-                    else
-                        print("[TROL] Selecionando player")
-                        startTrolling(plr)
-                    end
-                    updateTrollPlayerList()
-                end
-            end)
-            yPos = yPos + 55
-        end
-    end
-    TrollPlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, yPos)
-end
-
-trollBtn.MouseButton1Click:Connect(function()
-    trollPlayerEnabled = not trollPlayerEnabled
-    trollIndicator.BackgroundColor3 = trollPlayerEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-    TrollPlayerListFrame.Visible = trollPlayerEnabled
-    print("[TROL] TrolPlayer", trollPlayerEnabled and "ATIVADO" or "DESATIVADO")
-    
-    if trollPlayerEnabled then
-        updateTrollPlayerList()
-    else
-        stopTrolling()
-        TrollPlayerListFrame.Visible = false
-    end
 end)
 
 -- ABA 3: PLAYER
@@ -584,7 +414,6 @@ local flying, flySpeed, bodyVelocity, bodyGyro = false, 65, nil, nil
 local speedEnabled, walkSpeed = false, 65
 local jumpEnabled, jumpPower = false, 100
 local clickTpEnabled = false
-local invisEnabled = false
 local freezeEnabled = false
 local frozenCFrame = nil
 
@@ -680,14 +509,12 @@ local speedBox = createValueBox(Content3, 50, "65")
 local jumpBtn, jumpIndicator = createButton("SuperJump", Content3, 95)
 local jumpBox = createValueBox(Content3, 95, "100")
 
-local invisBtn, invisIndicator = createButton("Invisibilidade", Content3, 140)
-
-local freezeBtn, freezeIndicator = createButton("Congelar Posição", Content3, 185)
+local freezeBtn, freezeIndicator = createButton("Congelar Posição", Content3, 140)
 
 local tpBtn = Instance.new("TextButton")
 tpBtn.Parent = Content3
 tpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-tpBtn.Position = UDim2.new(0, 10, 0, 230)
+tpBtn.Position = UDim2.new(0, 10, 0, 185)
 tpBtn.Size = UDim2.new(0, 165, 0, 35)
 tpBtn.Font = Enum.Font.Gotham
 tpBtn.Text = "TP Players ▼"
@@ -700,7 +527,7 @@ tpCorner.Parent = tpBtn
 local clickTpBtn = Instance.new("TextButton")
 clickTpBtn.Parent = Content3
 clickTpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-clickTpBtn.Position = UDim2.new(0, 180, 0, 230)
+clickTpBtn.Position = UDim2.new(0, 180, 0, 185)
 clickTpBtn.Size = UDim2.new(0, 30, 0, 35)
 clickTpBtn.Text = "Q"
 clickTpBtn.Font = Enum.Font.GothamBold
@@ -723,7 +550,7 @@ clickTpIndicatorCorner.Parent = clickTpIndicator
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Parent = Content3
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-PlayerListFrame.Position = UDim2.new(0, 10, 0, 270)
+PlayerListFrame.Position = UDim2.new(0, 10, 0, 225)
 PlayerListFrame.Size = UDim2.new(0, 200, 0, 60)
 PlayerListFrame.Visible = false
 local listCorner = Instance.new("UICorner")
@@ -889,50 +716,6 @@ jumpBtn.MouseButton1Click:Connect(function()
     jumpIndicator.BackgroundColor3 = jumpEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
 end)
 
-local function setInvisibility(enabled)
-    pcall(function()
-        local char = player.Character
-        if not char then return end
-        
-        local hum = char:FindFirstChildOfClass("Humanoid")
-        if hum then
-            if enabled then
-                origName[hum] = { hum.DisplayDistanceType, hum.NameDisplayDistance }
-                hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-                hum.NameDisplayDistance = 0
-            elseif origName[hum] then
-                hum.DisplayDistanceType = origName[hum][1]
-                hum.NameDisplayDistance = origName[hum][2]
-            end
-        end
-        
-        for _, o in ipairs(char:GetDescendants()) do
-            if o:IsA("BasePart") or o:IsA("Decal") or o:IsA("Texture") or o:IsA("MeshPart") then
-                if enabled then
-                    if origTrans[o] == nil then
-                        origTrans[o] = o.Transparency
-                    end
-                    o.Transparency = 1
-                else
-                    if origTrans[o] ~= nil then
-                        o.Transparency = origTrans[o]
-                    end
-                end
-            end
-        end
-        
-        if not enabled then
-            origTrans = {}
-        end
-    end)
-end
-
-invisBtn.MouseButton1Click:Connect(function()
-    invisEnabled = not invisEnabled
-    setInvisibility(invisEnabled)
-    invisIndicator.BackgroundColor3 = invisEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-end)
-
 freezeBtn.MouseButton1Click:Connect(function()
     freezeEnabled = not freezeEnabled
     if freezeEnabled then
@@ -1003,10 +786,6 @@ player.CharacterAdded:Connect(function()
     if speedEnabled then updateSpeed() end
     if jumpEnabled then updateJump() end
     if flying then startFly() end
-    if invisEnabled then
-        task.wait(1)
-        setInvisibility(true)
-    end
 end)
 
 -- Tab System Logic
@@ -1568,3 +1347,4 @@ end)
 
 print("[VoiceTTS] Carregado! Z=Menu | Server:", SERVER_URL)
 
+ ]]

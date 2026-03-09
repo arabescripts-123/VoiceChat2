@@ -64,7 +64,7 @@ TabsFrame.Position = UDim2.new(0, 0, 0, 35)
 TabsFrame.Size = UDim2.new(1, 0, 0, 30)
 TabsFrame.ScrollBarThickness = 4
 TabsFrame.BorderSizePixel = 0
-TabsFrame.CanvasSize = UDim2.new(0, 300, 0, 30)
+TabsFrame.CanvasSize = UDim2.new(0, 400, 0, 30)
 TabsFrame.ScrollingDirection = Enum.ScrollingDirection.X
 
 local function createTab(name, pos)
@@ -86,6 +86,7 @@ end
 local tab1 = createTab("Chat", 5)
 local tab2 = createTab("Música", 77)
 local tab3 = createTab("Player", 149)
+local tab4 = createTab("Godmode", 221)
 
 -- Content Frames
 local Content1 = Instance.new("Frame")
@@ -108,6 +109,13 @@ Content3.BackgroundTransparency = 1
 Content3.Position = UDim2.new(0, 0, 0, 70)
 Content3.Size = UDim2.new(1, 0, 1, -70)
 Content3.Visible = false
+
+local Content4 = Instance.new("Frame")
+Content4.Parent = MainFrame
+Content4.BackgroundTransparency = 1
+Content4.Position = UDim2.new(0, 0, 0, 70)
+Content4.Size = UDim2.new(1, 0, 1, -70)
+Content4.Visible = false
 
 local rejoinBtn = Instance.new("TextButton")
 rejoinBtn.Parent = MainFrame
@@ -386,6 +394,78 @@ local telekinesisBodyPosition = nil
 local telekinesisBodyGyro = nil
 local telekinesisHighlight = nil
 
+-- ABA 4: GODMODE
+local God = {
+    Enabled = false,
+    HealThresh = 60,
+    BaseMaxHP = 200,
+    AntiFall = true,
+    HeartbeatCon = nil,
+    HealthCon = nil
+}
+
+local function addForceField(character)
+    if not character or character:FindFirstChildOfClass("ForceField") then return end
+    local ff = Instance.new("ForceField")
+    ff.Visible = false
+    ff.Parent = character
+end
+
+local function applyHPStats(h)
+    if not h then return end
+    h.MaxHealth = God.BaseMaxHP
+    local th = h.MaxHealth * (God.HealThresh / 100)
+    if h.Health < th then
+        h.Health = h.MaxHealth
+    end
+end
+
+local function enableGodOnChar(char)
+    local h = char and char:FindFirstChildOfClass("Humanoid")
+    if not h then return end
+
+    if God.HeartbeatCon then God.HeartbeatCon:Disconnect() God.HeartbeatCon = nil end
+    if God.HealthCon then God.HealthCon:Disconnect() God.HealthCon = nil end
+
+    applyHPStats(h)
+    addForceField(char)
+
+    God.HealthCon = h.HealthChanged:Connect(function(health)
+        if not God.Enabled then return end
+        if health <= 0 then
+            task.spawn(function()
+                pcall(function() player:LoadCharacter() end)
+            end)
+        else
+            applyHPStats(h)
+        end
+    end)
+
+    God.HeartbeatCon = RunService.Heartbeat:Connect(function()
+        if not God.Enabled then return end
+        if h.Health > 0 then
+            applyHPStats(h)
+            addForceField(char)
+            if God.AntiFall then
+                local root = char:FindFirstChild("HumanoidRootPart")
+                if root then
+                    local v = root.Velocity
+                    if v.Y < -90 then
+                        local nv = Vector3.new(v.X, -50, v.Z)
+                        root.Velocity = nv
+                        root.AssemblyLinearVelocity = nv
+                    end
+                end
+            end
+        end
+    end)
+end
+
+local function disableGod()
+    if God.HeartbeatCon then God.HeartbeatCon:Disconnect() God.HeartbeatCon = nil end
+    if God.HealthCon then God.HealthCon:Disconnect() God.HealthCon = nil end
+end
+
 -- Anti-Fling automático (proteção contra toque com players)
 local MaxVel = 120
 local MaxVert = 80
@@ -404,6 +484,25 @@ RunService.Heartbeat:Connect(function()
         v = Vector3.new(v.X, math.clamp(v.Y, -MaxVert, MaxVert), v.Z)
         root.Velocity = v
         root.AssemblyLinearVelocity = v
+    end)
+end)
+
+-- Noclip automático apenas com players
+RunService.Stepped:Connect(function()
+    pcall(function()
+        if not player.Character then return end
+        for _, part in ipairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
+                    if otherPlayer ~= player and otherPlayer.Character then
+                        local otherRoot = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if otherRoot and (part.Position - otherRoot.Position).Magnitude < 10 then
+                            part.CanCollide = false
+                        end
+                    end
+                end
+            end
+        end
     end)
 end)
 
@@ -494,6 +593,73 @@ PlayerListScroll.BackgroundTransparency = 1
 PlayerListScroll.Size = UDim2.new(1, 0, 1, 0)
 PlayerListScroll.ScrollBarThickness = 4
 PlayerListScroll.BorderSizePixel = 0
+
+-- ABA 4: GODMODE ELEMENTS
+local godBtn, godIndicator = createButton("Godmode", Content4, 5)
+
+local healLabel = Instance.new("TextLabel")
+healLabel.Parent = Content4
+healLabel.BackgroundTransparency = 1
+healLabel.Position = UDim2.new(0, 10, 0, 50)
+healLabel.Size = UDim2.new(0, 200, 0, 15)
+healLabel.Font = Enum.Font.Gotham
+healLabel.Text = "Cura Auto: 60%"
+healLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+healLabel.TextSize = 11
+healLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local healSlider = Instance.new("Frame")
+healSlider.Parent = Content4
+healSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+healSlider.Position = UDim2.new(0, 10, 0, 70)
+healSlider.Size = UDim2.new(0, 200, 0, 6)
+healSlider.BorderSizePixel = 0
+local healSliderCorner = Instance.new("UICorner")
+healSliderCorner.CornerRadius = UDim.new(1, 0)
+healSliderCorner.Parent = healSlider
+
+local healHandle = Instance.new("Frame")
+healHandle.Parent = healSlider
+healHandle.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+healHandle.Position = UDim2.new(0.5, 0, 0.5, -8)
+healHandle.Size = UDim2.new(0, 16, 0, 16)
+healHandle.BorderSizePixel = 0
+local healHandleCorner = Instance.new("UICorner")
+healHandleCorner.CornerRadius = UDim.new(1, 0)
+healHandleCorner.Parent = healHandle
+
+local hpLabel = Instance.new("TextLabel")
+hpLabel.Parent = Content4
+hpLabel.BackgroundTransparency = 1
+hpLabel.Position = UDim2.new(0, 10, 0, 90)
+hpLabel.Size = UDim2.new(0, 200, 0, 15)
+hpLabel.Font = Enum.Font.Gotham
+hpLabel.Text = "Vida Máxima: 200"
+hpLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+hpLabel.TextSize = 11
+hpLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local hpSlider = Instance.new("Frame")
+hpSlider.Parent = Content4
+hpSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+hpSlider.Position = UDim2.new(0, 10, 0, 110)
+hpSlider.Size = UDim2.new(0, 200, 0, 6)
+hpSlider.BorderSizePixel = 0
+local hpSliderCorner = Instance.new("UICorner")
+hpSliderCorner.CornerRadius = UDim.new(1, 0)
+hpSliderCorner.Parent = hpSlider
+
+local hpHandle = Instance.new("Frame")
+hpHandle.Parent = hpSlider
+hpHandle.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+hpHandle.Position = UDim2.new(0.11, 0, 0.5, -8)
+hpHandle.Size = UDim2.new(0, 16, 0, 16)
+hpHandle.BorderSizePixel = 0
+local hpHandleCorner = Instance.new("UICorner")
+hpHandleCorner.CornerRadius = UDim.new(1, 0)
+hpHandleCorner.Parent = hpHandle
+
+local antiFallBtn, antiFallIndicator = createButton("Anti-Queda", Content4, 130)
 
 local function startFly()
     flying = true
@@ -763,6 +929,63 @@ player.CharacterAdded:Connect(function()
     if speedEnabled then updateSpeed() end
     if jumpEnabled then updateJump() end
     if flying then startFly() end
+    if God.Enabled then enableGodOnChar(player.Character) end
+end)
+
+-- Godmode Events
+godBtn.MouseButton1Click:Connect(function()
+    God.Enabled = not God.Enabled
+    godIndicator.BackgroundColor3 = God.Enabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+    if God.Enabled then
+        if player.Character then enableGodOnChar(player.Character) end
+    else
+        disableGod()
+    end
+end)
+
+antiFallBtn.MouseButton1Click:Connect(function()
+    God.AntiFall = not God.AntiFall
+    antiFallIndicator.BackgroundColor3 = God.AntiFall and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
+local healDragging = false
+healHandle.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then healDragging = true end
+end)
+
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then healDragging = false end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if healDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local mousePos = UIS:GetMouseLocation()
+        local trackPos = healSlider.AbsolutePosition.X
+        local trackSize = healSlider.AbsoluteSize.X
+        local relativePos = math.clamp(mousePos.X - trackPos, 0, trackSize)
+        local percentage = relativePos / trackSize
+        God.HealThresh = 20 + (percentage * 75)
+        healHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
+        healLabel.Text = string.format("Cura Auto: %.0f%%", God.HealThresh)
+    end
+end)
+
+local hpDragging = false
+hpHandle.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then hpDragging = true end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if hpDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local mousePos = UIS:GetMouseLocation()
+        local trackPos = hpSlider.AbsolutePosition.X
+        local trackSize = hpSlider.AbsoluteSize.X
+        local relativePos = math.clamp(mousePos.X - trackPos, 0, trackSize)
+        local percentage = relativePos / trackSize
+        God.BaseMaxHP = 100 + (percentage * 900)
+        hpHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
+        hpLabel.Text = string.format("Vida Máxima: %.0f", God.BaseMaxHP)
+    end
 end)
 
 -- Tab System Logic
@@ -770,27 +993,44 @@ tab1.MouseButton1Click:Connect(function()
     Content1.Visible = true
     Content2.Visible = false
     Content3.Visible = false
+    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 end)
 
 tab2.MouseButton1Click:Connect(function()
     Content1.Visible = false
     Content2.Visible = true
     Content3.Visible = false
+    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab2.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 end)
 
 tab3.MouseButton1Click:Connect(function()
     Content1.Visible = false
     Content2.Visible = false
     Content3.Visible = true
+    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab3.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+end)
+
+tab4.MouseButton1Click:Connect(function()
+    Content1.Visible = false
+    Content2.Visible = false
+    Content3.Visible = false
+    Content4.Visible = true
+    tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab4.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 end)
 
 tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)

@@ -1,4 +1,4 @@
---[[ -- Voice TTS + AI Chat (HTTP Version)
+-- Voice TTS + AI Chat (HTTP Version)
 print("[VoiceTTS] Iniciando...")
 
 local player = game.Players.LocalPlayer
@@ -1346,5 +1346,3 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 end)
 
 print("[VoiceTTS] Carregado! Z=Menu | Server:", SERVER_URL)
-
- ]]

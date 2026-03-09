@@ -407,22 +407,21 @@ RunService.Heartbeat:Connect(function()
     end)
 end)
 
--- Sistema de NoCollide com outros players (automático)
-local function setupNoCollideWithPlayers(character)
+-- NoCollide com players (otimizado)
+RunService.Stepped:Connect(function()
     pcall(function()
-        for _, part in ipairs(character:GetDescendants()) do
+        if not player.Character then return end
+        for _, part in ipairs(player.Character:GetDescendants()) do
             if part:IsA("BasePart") then
-                -- Desabilita colisão com outros players
                 for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
                     if otherPlayer ~= player and otherPlayer.Character then
                         for _, otherPart in ipairs(otherPlayer.Character:GetDescendants()) do
                             if otherPart:IsA("BasePart") then
                                 pcall(function()
-                                    local noCollide = Instance.new("NoCollisionConstraint")
-                                    noCollide.Part0 = part
-                                    noCollide.Part1 = otherPart
-                                    noCollide.Parent = part
+                                    game:GetService("PhysicsService"):CollisionGroupSetCollidable("Players", "Players", false)
                                 end)
+                                part.CollisionGroup = "Players"
+                                otherPart.CollisionGroup = "Players"
                             end
                         end
                     end
@@ -430,28 +429,7 @@ local function setupNoCollideWithPlayers(character)
             end
         end
     end)
-end
-
--- Aplica NoCollide quando spawna
-player.CharacterAdded:Connect(function(char)
-    task.wait(0.5)
-    setupNoCollideWithPlayers(char)
 end)
-
--- Aplica NoCollide quando outros players spawnam
-game.Players.PlayerAdded:Connect(function(otherPlayer)
-    otherPlayer.CharacterAdded:Connect(function()
-        task.wait(0.5)
-        if player.Character then
-            setupNoCollideWithPlayers(player.Character)
-        end
-    end)
-end)
-
--- Aplica NoCollide no personagem atual
-if player.Character then
-    setupNoCollideWithPlayers(player.Character)
-end
 
 local function createValueBox(parent, yPos, text)
     local box = Instance.new("TextBox")

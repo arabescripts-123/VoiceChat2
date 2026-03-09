@@ -86,7 +86,6 @@ end
 local tab1 = createTab("Chat", 5)
 local tab2 = createTab("Música", 77)
 local tab3 = createTab("Player", 149)
-local tab4 = createTab("Others", 221)
 
 -- Content Frames
 local Content1 = Instance.new("Frame")
@@ -109,13 +108,6 @@ Content3.BackgroundTransparency = 1
 Content3.Position = UDim2.new(0, 0, 0, 70)
 Content3.Size = UDim2.new(1, 0, 1, -70)
 Content3.Visible = false
-
-local Content4 = Instance.new("Frame")
-Content4.Parent = MainFrame
-Content4.BackgroundTransparency = 1
-Content4.Position = UDim2.new(0, 0, 0, 70)
-Content4.Size = UDim2.new(1, 0, 1, -70)
-Content4.Visible = false
 
 local rejoinBtn = Instance.new("TextButton")
 rejoinBtn.Parent = MainFrame
@@ -376,37 +368,6 @@ local playerPermissionIndicatorCorner = Instance.new("UICorner")
 playerPermissionIndicatorCorner.CornerRadius = UDim.new(1, 0)
 playerPermissionIndicatorCorner.Parent = playerPermissionIndicator
 
--- ABA 4: OTHERS
-local duplicateBtn = createSimpleButton("Duplicar Item", Content4, 5)
-
-duplicateBtn.MouseButton1Click:Connect(function()
-    pcall(function()
-        local char = player.Character
-        if not char then 
-            print("[DUPLICATE] Personagem não encontrado")
-            return 
-        end
-        
-        local tool = char:FindFirstChildOfClass("Tool")
-        if not tool then
-            print("[DUPLICATE] Nenhum item na mão")
-            return
-        end
-        
-        local backpack = player:FindFirstChild("Backpack")
-        if not backpack then
-            print("[DUPLICATE] Backpack não encontrado")
-            return
-        end
-        
-        -- Clona o item
-        local clonedTool = tool:Clone()
-        clonedTool.Parent = backpack
-        
-        print("[DUPLICATE] Item duplicado:", tool.Name)
-    end)
-end)
-
 -- ABA 3: PLAYER
 local RunService = game:GetService("RunService")
 local PhysicsService = game:GetService("PhysicsService")
@@ -416,6 +377,12 @@ local jumpEnabled, jumpPower = false, 100
 local clickTpEnabled = false
 local freezeEnabled = false
 local frozenCFrame = nil
+
+-- Sistema de Telecinese
+local telekinesisEnabled = false
+local telekinesisObject = nil
+local telekinesisBodyPosition = nil
+local telekinesisBodyGyro = nil
 
 -- Anti-Fling automático (proteção contra toque com players)
 local MaxVel = 120
@@ -510,6 +477,8 @@ local jumpBtn, jumpIndicator = createButton("SuperJump", Content3, 95)
 local jumpBox = createValueBox(Content3, 95, "100")
 
 local freezeBtn, freezeIndicator = createButton("Congelar Posição", Content3, 140)
+
+local telekinesisBtn, telekinesisIndicator = createButton("Telecinese", Content3, 230)
 
 local tpBtn = Instance.new("TextButton")
 tpBtn.Parent = Content3
@@ -725,6 +694,16 @@ freezeBtn.MouseButton1Click:Connect(function()
     freezeIndicator.BackgroundColor3 = freezeEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
 end)
 
+telekinesisBtn.MouseButton1Click:Connect(function()
+    telekinesisEnabled = not telekinesisEnabled
+    telekinesisIndicator.BackgroundColor3 = telekinesisEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+    if not telekinesisEnabled and telekinesisObject then
+        if telekinesisBodyPosition then telekinesisBodyPosition:Destroy() telekinesisBodyPosition = nil end
+        if telekinesisBodyGyro then telekinesisBodyGyro:Destroy() telekinesisBodyGyro = nil end
+        telekinesisObject = nil
+    end
+end)
+
 RunService.Heartbeat:Connect(function()
     if freezeEnabled and frozenCFrame then
         pcall(function()
@@ -733,6 +712,16 @@ RunService.Heartbeat:Connect(function()
                 root.CFrame = frozenCFrame
                 root.Velocity = Vector3.new()
             end
+        end)
+    end
+    
+    if telekinesisEnabled and telekinesisObject and telekinesisBodyPosition then
+        pcall(function()
+            local mouse = player:GetMouse()
+            local cam = workspace.CurrentCamera
+            local mouseRay = cam:ScreenPointToRay(mouse.X, mouse.Y)
+            local targetPos = mouseRay.Origin + mouseRay.Direction * 15
+            telekinesisBodyPosition.Position = targetPos
         end)
     end
 end)
@@ -793,44 +782,27 @@ tab1.MouseButton1Click:Connect(function()
     Content1.Visible = true
     Content2.Visible = false
     Content3.Visible = false
-    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 end)
 
 tab2.MouseButton1Click:Connect(function()
     Content1.Visible = false
     Content2.Visible = true
     Content3.Visible = false
-    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab2.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 end)
 
 tab3.MouseButton1Click:Connect(function()
     Content1.Visible = false
     Content2.Visible = false
     Content3.Visible = true
-    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab3.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-end)
-
-tab4.MouseButton1Click:Connect(function()
-    Content1.Visible = false
-    Content2.Visible = false
-    Content3.Visible = false
-    Content4.Visible = true
-    tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab4.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 end)
 
 tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
@@ -1332,6 +1304,10 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     if input.KeyCode == Enum.KeyCode.Z then
         MainFrame.Visible = not MainFrame.Visible
+    elseif input.KeyCode == Enum.KeyCode.F then
+        flying = not flying
+        if flying then startFly() else stopFly() end
+        flyIndicator.BackgroundColor3 = flying and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
     elseif input.KeyCode == Enum.KeyCode.Q and clickTpEnabled then
         pcall(function()
             if not player.Character then return end
@@ -1345,4 +1321,39 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
-print("[VoiceTTS] Carregado! Z=Menu | Server:", SERVER_URL)
+local mouse = player:GetMouse()
+mouse.Button1Down:Connect(function()
+    if not telekinesisEnabled then return end
+    
+    pcall(function()
+        if telekinesisObject then
+            -- Soltar objeto
+            if telekinesisBodyPosition then telekinesisBodyPosition:Destroy() telekinesisBodyPosition = nil end
+            if telekinesisBodyGyro then telekinesisBodyGyro:Destroy() telekinesisBodyGyro = nil end
+            telekinesisObject = nil
+        else
+            -- Pegar objeto
+            local target = mouse.Target
+            if target and target:IsA("BasePart") and not target.Anchored then
+                if not target:IsDescendantOf(player.Character) then
+                    telekinesisObject = target
+                    
+                    telekinesisBodyPosition = Instance.new("BodyPosition")
+                    telekinesisBodyPosition.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+                    telekinesisBodyPosition.P = 5000
+                    telekinesisBodyPosition.D = 500
+                    telekinesisBodyPosition.Position = target.Position
+                    telekinesisBodyPosition.Parent = target
+                    
+                    telekinesisBodyGyro = Instance.new("BodyGyro")
+                    telekinesisBodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+                    telekinesisBodyGyro.P = 3000
+                    telekinesisBodyGyro.CFrame = target.CFrame
+                    telekinesisBodyGyro.Parent = target
+                end
+            end
+        end
+    end)
+end)
+
+print("[VoiceTTS] Carregado! Z=Menu | F=Fly | Server:", SERVER_URL)

@@ -741,7 +741,7 @@ RunService.Heartbeat:Connect(function()
                 local mouse = player:GetMouse()
                 local cam = workspace.CurrentCamera
                 local mouseRay = cam:ScreenPointToRay(mouse.X, mouse.Y)
-                local targetPos = mouseRay.Origin + mouseRay.Direction * 15
+                local targetPos = mouseRay.Origin + mouseRay.Direction * 25
                 telekinesisBodyPosition.Position = targetPos
             end
         end)
@@ -1378,16 +1378,18 @@ mouse.Button1Down:Connect(function()
                 if not target:IsDescendantOf(player.Character) then
                     telekinesisObject = target
                     
+                    target.CustomPhysicalProperties = PhysicalProperties.new(0.01, 0, 0, 0, 0)
+                    
                     telekinesisBodyPosition = Instance.new("BodyPosition")
-                    telekinesisBodyPosition.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-                    telekinesisBodyPosition.P = 5000
-                    telekinesisBodyPosition.D = 500
+                    telekinesisBodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                    telekinesisBodyPosition.P = 10000
+                    telekinesisBodyPosition.D = 1000
                     telekinesisBodyPosition.Position = target.Position
                     telekinesisBodyPosition.Parent = target
                     
                     telekinesisBodyGyro = Instance.new("BodyGyro")
-                    telekinesisBodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-                    telekinesisBodyGyro.P = 3000
+                    telekinesisBodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                    telekinesisBodyGyro.P = 5000
                     telekinesisBodyGyro.CFrame = target.CFrame
                     telekinesisBodyGyro.Parent = target
                     

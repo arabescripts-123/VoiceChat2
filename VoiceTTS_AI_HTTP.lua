@@ -376,11 +376,52 @@ local playerPermissionIndicatorCorner = Instance.new("UICorner")
 playerPermissionIndicatorCorner.CornerRadius = UDim.new(1, 0)
 playerPermissionIndicatorCorner.Parent = playerPermissionIndicator
 
--- ABA 4: TROL
+-- ABA 4: TROL (declarações iniciais)
 local trollPlayerEnabled = false
 local selectedTrollTarget = nil
 local savedPosition = nil
 local trollConnection = nil
+local origTrans = {}
+local origName = {}
+
+-- Função setInvisibility (precisa estar antes das funções de troll)
+local function setInvisibility(enabled)
+    pcall(function()
+        local char = player.Character
+        if not char then return end
+        
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            if enabled then
+                origName[hum] = { hum.DisplayDistanceType, hum.NameDisplayDistance }
+                hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+                hum.NameDisplayDistance = 0
+            elseif origName[hum] then
+                hum.DisplayDistanceType = origName[hum][1]
+                hum.NameDisplayDistance = origName[hum][2]
+            end
+        end
+        
+        for _, o in ipairs(char:GetDescendants()) do
+            if o:IsA("BasePart") or o:IsA("Decal") or o:IsA("Texture") or o:IsA("MeshPart") then
+                if enabled then
+                    if origTrans[o] == nil then
+                        origTrans[o] = o.Transparency
+                    end
+                    o.Transparency = 1
+                else
+                    if origTrans[o] ~= nil then
+                        o.Transparency = origTrans[o]
+                    end
+                end
+            end
+        end
+        
+        if not enabled then
+            origTrans = {}
+        end
+    end)
+end
 
 local trollBtn, trollIndicator = createButton("TrolPlayer", Content4, 5)
 
@@ -406,6 +447,7 @@ TrollPlayerListScroll.ScrollBarThickness = 4
 TrollPlayerListScroll.BorderSizePixel = 0
 
 local function stopTrolling()
+    print("[TROL] Parando troll...")
     if trollConnection then
         trollConnection:Disconnect()
         trollConnection = nil
@@ -423,6 +465,7 @@ local function stopTrolling()
 end
 
 local function startTrolling(targetPlayer)
+    print("[TROL] Iniciando troll em", targetPlayer.Name)
     if not targetPlayer or not targetPlayer.Character then return end
     
     stopTrolling()
@@ -431,9 +474,11 @@ local function startTrolling(targetPlayer)
     
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         savedPosition = player.Character.HumanoidRootPart.CFrame
+        print("[TROL] Posição salva:", savedPosition)
     end
     
     setInvisibility(true)
+    print("[TROL] Invisibilidade ativada")
     
     trollConnection = game:GetService("RunService").Heartbeat:Connect(function()
         pcall(function()
@@ -500,10 +545,13 @@ local function updateTrollPlayerList()
             btn.Size = UDim2.new(1, 0, 1, 0)
             btn.Text = ""
             btn.MouseButton1Click:Connect(function()
+                print("[TROL] Clicou em", plr.Name)
                 if trollPlayerEnabled then
                     if selectedTrollTarget == plr then
+                        print("[TROL] Deselecionando player")
                         stopTrolling()
                     else
+                        print("[TROL] Selecionando player")
                         startTrolling(plr)
                     end
                     updateTrollPlayerList()
@@ -519,6 +567,7 @@ trollBtn.MouseButton1Click:Connect(function()
     trollPlayerEnabled = not trollPlayerEnabled
     trollIndicator.BackgroundColor3 = trollPlayerEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
     TrollPlayerListFrame.Visible = trollPlayerEnabled
+    print("[TROL] TrolPlayer", trollPlayerEnabled and "ATIVADO" or "DESATIVADO")
     
     if trollPlayerEnabled then
         updateTrollPlayerList()
@@ -538,8 +587,6 @@ local clickTpEnabled = false
 local invisEnabled = false
 local freezeEnabled = false
 local frozenCFrame = nil
-local origTrans = {}
-local origName = {}
 
 -- Anti-Fling automático (proteção contra toque com players)
 local MaxVel = 120

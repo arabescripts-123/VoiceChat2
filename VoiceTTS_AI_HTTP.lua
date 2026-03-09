@@ -56,12 +56,16 @@ Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.Position = UDim2.new(0, 10, 0, 0)
 Title.Active = true
 
--- Tabs Container
-local TabsFrame = Instance.new("Frame")
+-- Tabs Container com Scroll
+local TabsFrame = Instance.new("ScrollingFrame")
 TabsFrame.Parent = MainFrame
 TabsFrame.BackgroundTransparency = 1
 TabsFrame.Position = UDim2.new(0, 0, 0, 35)
 TabsFrame.Size = UDim2.new(1, 0, 0, 30)
+TabsFrame.ScrollBarThickness = 4
+TabsFrame.BorderSizePixel = 0
+TabsFrame.CanvasSize = UDim2.new(0, 300, 0, 30)
+TabsFrame.ScrollingDirection = Enum.ScrollingDirection.X
 
 local function createTab(name, pos)
     local tab = Instance.new("TextButton")
@@ -82,6 +86,7 @@ end
 local tab1 = createTab("Chat", 5)
 local tab2 = createTab("Música", 77)
 local tab3 = createTab("Player", 149)
+local tab4 = createTab("Trol", 221)
 
 -- Content Frames
 local Content1 = Instance.new("Frame")
@@ -104,6 +109,13 @@ Content3.BackgroundTransparency = 1
 Content3.Position = UDim2.new(0, 0, 0, 70)
 Content3.Size = UDim2.new(1, 0, 1, -70)
 Content3.Visible = false
+
+local Content4 = Instance.new("Frame")
+Content4.Parent = MainFrame
+Content4.BackgroundTransparency = 1
+Content4.Position = UDim2.new(0, 0, 0, 70)
+Content4.Size = UDim2.new(1, 0, 1, -70)
+Content4.Visible = false
 
 local rejoinBtn = Instance.new("TextButton")
 rejoinBtn.Parent = MainFrame
@@ -363,6 +375,158 @@ playerPermissionIndicator.BorderSizePixel = 0
 local playerPermissionIndicatorCorner = Instance.new("UICorner")
 playerPermissionIndicatorCorner.CornerRadius = UDim.new(1, 0)
 playerPermissionIndicatorCorner.Parent = playerPermissionIndicator
+
+-- ABA 4: TROL
+local trollPlayerEnabled = false
+local selectedTrollTarget = nil
+local savedPosition = nil
+local trollConnection = nil
+
+local trollBtn, trollIndicator = createButton("TrolPlayer", Content4, 5)
+
+local TrollPlayerListFrame = Instance.new("Frame")
+TrollPlayerListFrame.Parent = Content4
+TrollPlayerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TrollPlayerListFrame.Position = UDim2.new(0, 10, 0, 50)
+TrollPlayerListFrame.Size = UDim2.new(0, 200, 0, 280)
+TrollPlayerListFrame.Visible = false
+local trollListCorner = Instance.new("UICorner")
+trollListCorner.CornerRadius = UDim.new(0, 8)
+trollListCorner.Parent = TrollPlayerListFrame
+local trollListStroke = Instance.new("UIStroke")
+trollListStroke.Parent = TrollPlayerListFrame
+trollListStroke.Color = Color3.fromRGB(0, 0, 0)
+trollListStroke.Thickness = 3
+
+local TrollPlayerListScroll = Instance.new("ScrollingFrame")
+TrollPlayerListScroll.Parent = TrollPlayerListFrame
+TrollPlayerListScroll.BackgroundTransparency = 1
+TrollPlayerListScroll.Size = UDim2.new(1, 0, 1, 0)
+TrollPlayerListScroll.ScrollBarThickness = 4
+TrollPlayerListScroll.BorderSizePixel = 0
+
+local function stopTrolling()
+    if trollConnection then
+        trollConnection:Disconnect()
+        trollConnection = nil
+    end
+    
+    if player.Character then
+        setInvisibility(false)
+        if savedPosition and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = savedPosition
+        end
+    end
+    
+    selectedTrollTarget = nil
+    savedPosition = nil
+end
+
+local function startTrolling(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return end
+    
+    stopTrolling()
+    
+    selectedTrollTarget = targetPlayer
+    
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        savedPosition = player.Character.HumanoidRootPart.CFrame
+    end
+    
+    setInvisibility(true)
+    
+    trollConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        pcall(function()
+            if not trollPlayerEnabled or not selectedTrollTarget or not selectedTrollTarget.Character then
+                stopTrolling()
+                return
+            end
+            
+            local targetRoot = selectedTrollTarget.Character:FindFirstChild("HumanoidRootPart")
+            local myRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            
+            if targetRoot and myRoot then
+                myRoot.CFrame = targetRoot.CFrame
+                myRoot.Velocity = Vector3.zero
+            end
+        end)
+    end)
+end
+
+local function updateTrollPlayerList()
+    for _, child in pairs(TrollPlayerListScroll:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+    local yPos = 0
+    for _, plr in pairs(game.Players:GetPlayers()) do
+        if plr ~= player then
+            local frame = Instance.new("Frame")
+            frame.Parent = TrollPlayerListScroll
+            frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            frame.Position = UDim2.new(0, 5, 0, yPos)
+            frame.Size = UDim2.new(1, -10, 0, 50)
+            local corner = Instance.new("UICorner")
+            corner.CornerRadius = UDim.new(0, 6)
+            corner.Parent = frame
+            
+            local img = Instance.new("ImageLabel")
+            img.Parent = frame
+            img.BackgroundTransparency = 1
+            img.Position = UDim2.new(0, 5, 0.5, -20)
+            img.Size = UDim2.new(0, 40, 0, 40)
+            img.Image = "rbxthumb://type=AvatarHeadShot&id="..plr.UserId.."&w=150&h=150"
+            local imgCorner = Instance.new("UICorner")
+            imgCorner.CornerRadius = UDim.new(1, 0)
+            imgCorner.Parent = img
+            
+            local label = Instance.new("TextLabel")
+            label.Parent = frame
+            label.BackgroundTransparency = 1
+            label.Position = UDim2.new(0, 50, 0, 0)
+            label.Size = UDim2.new(1, -55, 1, 0)
+            label.Font = Enum.Font.Gotham
+            label.Text = plr.Name
+            label.TextColor3 = Color3.fromRGB(255, 255, 255)
+            label.TextSize = 12
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            
+            if selectedTrollTarget == plr then
+                frame.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+            end
+            
+            local btn = Instance.new("TextButton")
+            btn.Parent = frame
+            btn.BackgroundTransparency = 1
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.Text = ""
+            btn.MouseButton1Click:Connect(function()
+                if trollPlayerEnabled then
+                    if selectedTrollTarget == plr then
+                        stopTrolling()
+                    else
+                        startTrolling(plr)
+                    end
+                    updateTrollPlayerList()
+                end
+            end)
+            yPos = yPos + 55
+        end
+    end
+    TrollPlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, yPos)
+end
+
+trollBtn.MouseButton1Click:Connect(function()
+    trollPlayerEnabled = not trollPlayerEnabled
+    trollIndicator.BackgroundColor3 = trollPlayerEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+    TrollPlayerListFrame.Visible = trollPlayerEnabled
+    
+    if trollPlayerEnabled then
+        updateTrollPlayerList()
+    else
+        stopTrolling()
+        TrollPlayerListFrame.Visible = false
+    end
+end)
 
 -- ABA 3: PLAYER
 local RunService = game:GetService("RunService")
@@ -803,27 +967,44 @@ tab1.MouseButton1Click:Connect(function()
     Content1.Visible = true
     Content2.Visible = false
     Content3.Visible = false
+    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 end)
 
 tab2.MouseButton1Click:Connect(function()
     Content1.Visible = false
     Content2.Visible = true
     Content3.Visible = false
+    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab2.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 end)
 
 tab3.MouseButton1Click:Connect(function()
     Content1.Visible = false
     Content2.Visible = false
     Content3.Visible = true
+    Content4.Visible = false
     tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     tab3.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+end)
+
+tab4.MouseButton1Click:Connect(function()
+    Content1.Visible = false
+    Content2.Visible = false
+    Content3.Visible = false
+    Content4.Visible = true
+    tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab4.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 end)
 
 tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)

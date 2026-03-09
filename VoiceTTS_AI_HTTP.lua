@@ -25,7 +25,7 @@ end)
 -- GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "VoiceTTSGui"
-ScreenGui.ResetOnSpawn = false
+ScreenGui.ResetOnSpawn = false 
 ScreenGui.Parent = game.CoreGui
 
 local MainFrame = Instance.new("Frame")
@@ -370,6 +370,32 @@ local flying, flySpeed, bodyVelocity, bodyGyro = false, 65, nil, nil
 local speedEnabled, walkSpeed = false, 65
 local jumpEnabled, jumpPower = false, 100
 local clickTpEnabled = false
+local invisEnabled = false
+local freezeEnabled = false
+local frozenCFrame = nil
+local origTrans = {}
+local origName = {}
+
+-- Anti-Fling automático (proteção contra toque com players)
+local MaxVel = 120
+local MaxVert = 80
+
+RunService.Heartbeat:Connect(function()
+    pcall(function()
+        local char = player.Character
+        if not char then return end
+        local root = char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        
+        local v = root.Velocity
+        if v.Magnitude > MaxVel then
+            v = v.Unit * MaxVel
+        end
+        v = Vector3.new(v.X, math.clamp(v.Y, -MaxVert, MaxVert), v.Z)
+        root.Velocity = v
+        root.AssemblyLinearVelocity = v
+    end)
+end)
 
 local function createValueBox(parent, yPos, text)
     local box = Instance.new("TextBox")
@@ -396,10 +422,14 @@ local speedBox = createValueBox(Content3, 50, "65")
 local jumpBtn, jumpIndicator = createButton("SuperJump", Content3, 95)
 local jumpBox = createValueBox(Content3, 95, "100")
 
+local invisBtn, invisIndicator = createButton("Invisibilidade", Content3, 140)
+
+local freezeBtn, freezeIndicator = createButton("Congelar Posição", Content3, 185)
+
 local tpBtn = Instance.new("TextButton")
 tpBtn.Parent = Content3
 tpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-tpBtn.Position = UDim2.new(0, 10, 0, 140)
+tpBtn.Position = UDim2.new(0, 10, 0, 230)
 tpBtn.Size = UDim2.new(0, 165, 0, 35)
 tpBtn.Font = Enum.Font.Gotham
 tpBtn.Text = "TP Players ▼"
@@ -412,7 +442,7 @@ tpCorner.Parent = tpBtn
 local clickTpBtn = Instance.new("TextButton")
 clickTpBtn.Parent = Content3
 clickTpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-clickTpBtn.Position = UDim2.new(0, 180, 0, 140)
+clickTpBtn.Position = UDim2.new(0, 180, 0, 230)
 clickTpBtn.Size = UDim2.new(0, 30, 0, 35)
 clickTpBtn.Text = "Q"
 clickTpBtn.Font = Enum.Font.GothamBold
@@ -435,8 +465,8 @@ clickTpIndicatorCorner.Parent = clickTpIndicator
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Parent = Content3
 PlayerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-PlayerListFrame.Position = UDim2.new(0, 10, 0, 180)
-PlayerListFrame.Size = UDim2.new(0, 200, 0, 150)
+PlayerListFrame.Position = UDim2.new(0, 10, 0, 270)
+PlayerListFrame.Size = UDim2.new(0, 200, 0, 60)
 PlayerListFrame.Visible = false
 local listCorner = Instance.new("UICorner")
 listCorner.CornerRadius = UDim.new(0, 8)
@@ -544,7 +574,7 @@ local function updatePlayerList()
             img.BackgroundTransparency = 1
             img.Position = UDim2.new(0, 5, 0.5, -15)
             img.Size = UDim2.new(0, 30, 0, 30)
-            img.Image = "https://www.roblox.com/headshot-thumbnail/image?userId="..plr.UserId.."&width=48&height=48&format=png"
+            img.Image = "rbxthumb://type=AvatarHeadShot&id="..plr.UserId.."&w=48&h=48"
             local imgCorner = Instance.new("UICorner")
             imgCorner.CornerRadius = UDim.new(1, 0)
             imgCorner.Parent = img
@@ -601,6 +631,71 @@ jumpBtn.MouseButton1Click:Connect(function()
     jumpIndicator.BackgroundColor3 = jumpEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
 end)
 
+local function setInvisibility(enabled)
+    pcall(function()
+        local char = player.Character
+        if not char then return end
+        
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            if enabled then
+                origName[hum] = { hum.DisplayDistanceType, hum.NameDisplayDistance }
+                hum.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+                hum.NameDisplayDistance = 0
+            elseif origName[hum] then
+                hum.DisplayDistanceType = origName[hum][1]
+                hum.NameDisplayDistance = origName[hum][2]
+            end
+        end
+        
+        for _, o in ipairs(char:GetDescendants()) do
+            if o:IsA("BasePart") or o:IsA("Decal") or o:IsA("Texture") or o:IsA("MeshPart") then
+                if enabled then
+                    if origTrans[o] == nil then
+                        origTrans[o] = o.Transparency
+                    end
+                    o.Transparency = 1
+                else
+                    if origTrans[o] ~= nil then
+                        o.Transparency = origTrans[o]
+                    end
+                end
+            end
+        end
+        
+        if not enabled then
+            origTrans = {}
+        end
+    end)
+end
+
+invisBtn.MouseButton1Click:Connect(function()
+    invisEnabled = not invisEnabled
+    setInvisibility(invisEnabled)
+    invisIndicator.BackgroundColor3 = invisEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
+freezeBtn.MouseButton1Click:Connect(function()
+    freezeEnabled = not freezeEnabled
+    if freezeEnabled then
+        local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        if root then frozenCFrame = root.CFrame end
+    end
+    freezeIndicator.BackgroundColor3 = freezeEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+end)
+
+RunService.Heartbeat:Connect(function()
+    if freezeEnabled and frozenCFrame then
+        pcall(function()
+            local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            if root then
+                root.CFrame = frozenCFrame
+                root.Velocity = Vector3.new()
+            end
+        end)
+    end
+end)
+
 tpBtn.MouseButton1Click:Connect(function()
     PlayerListFrame.Visible = not PlayerListFrame.Visible
     if PlayerListFrame.Visible then updatePlayerList() end
@@ -650,6 +745,10 @@ player.CharacterAdded:Connect(function()
     if speedEnabled then updateSpeed() end
     if jumpEnabled then updateJump() end
     if flying then startFly() end
+    if invisEnabled then
+        task.wait(1)
+        setInvisibility(true)
+    end
 end)
 
 -- Tab System Logic

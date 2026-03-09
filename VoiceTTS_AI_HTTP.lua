@@ -407,34 +407,6 @@ RunService.Heartbeat:Connect(function()
     end)
 end)
 
--- NoCollide com players (simples e eficiente)
-pcall(function()
-    game:GetService("PhysicsService"):RegisterCollisionGroup("NoCollide")
-    game:GetService("PhysicsService"):CollisionGroupSetCollidable("NoCollide", "NoCollide", false)
-end)
-
-local function setNoCollide(char)
-    task.spawn(function()
-        for _, part in ipairs(char:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CollisionGroup = "NoCollide"
-            end
-        end
-    end)
-end
-
-player.CharacterAdded:Connect(setNoCollide)
-if player.Character then setNoCollide(player.Character) end
-
-for _, plr in ipairs(game.Players:GetPlayers()) do
-    if plr.Character then setNoCollide(plr.Character) end
-    plr.CharacterAdded:Connect(setNoCollide)
-end
-
-game.Players.PlayerAdded:Connect(function(plr)
-    plr.CharacterAdded:Connect(setNoCollide)
-end)
-
 local function createValueBox(parent, yPos, text)
     local box = Instance.new("TextBox")
     box.Parent = parent

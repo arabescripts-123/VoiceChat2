@@ -63,7 +63,7 @@ Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, -40, 0, 36)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "ðŸŽ™ï¸ AS VoiceTTS"
+Title.Text = "AS VoiceTTS"
 Title.TextColor3 = Color3.fromRGB(200, 180, 255)
 Title.TextSize = 14
 Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -113,10 +113,10 @@ local function createTab(name, pos)
     return tab
 end
 
-local tab1 = createTab("ðŸ’¬ Chat", 4)
-local tab2 = createTab("ðŸŽµ MÃºsica", 80)
-local tab3 = createTab("ðŸŽ® Player", 156)
-local tab4 = createTab("ðŸ›¡ï¸ God", 232)
+local tab1 = createTab("Chat", 4)
+local tab2 = createTab("Musica", 80)
+local tab3 = createTab("Player", 156)
+local tab4 = createTab("God", 232)
 
 -- Content Frames
 local contentY = 72
@@ -155,7 +155,7 @@ rejoinBtn.BackgroundColor3 = Color3.fromRGB(160, 40, 40)
 rejoinBtn.Position = UDim2.new(1, -34, 0, 5)
 rejoinBtn.Size = UDim2.new(0, 26, 0, 26)
 rejoinBtn.Font = Enum.Font.GothamBold
-rejoinBtn.Text = "ðŸ”„"
+rejoinBtn.Text = "R"
 rejoinBtn.TextColor3 = Color3.fromRGB(255, 200, 200)
 rejoinBtn.TextSize = 13
 rejoinBtn.BorderSizePixel = 0
@@ -304,7 +304,7 @@ voiceInputBox.BackgroundTransparency = 1
 voiceInputBox.Position = UDim2.new(0, 10, 0, 0)
 voiceInputBox.Size = UDim2.new(1, -15, 1, 0)
 voiceInputBox.Font = Enum.Font.GothamMedium
-voiceInputBox.PlaceholderText = "ðŸ’¬ Digite para falar..."
+voiceInputBox.PlaceholderText = "Digite para falar..."
 voiceInputBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
 voiceInputBox.Text = ""
 voiceInputBox.TextColor3 = Color3.fromRGB(230, 230, 255)
@@ -325,7 +325,7 @@ voiceSendBtn.BackgroundColor3 = Color3.fromRGB(100, 60, 220)
 voiceSendBtn.Position = UDim2.new(0, 10, 0, 44)
 voiceSendBtn.Size = UDim2.new(0, 200, 0, 32)
 voiceSendBtn.Font = Enum.Font.GothamBold
-voiceSendBtn.Text = "ðŸŽ¤ Falar"
+voiceSendBtn.Text = "Falar"
 voiceSendBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 voiceSendBtn.TextSize = 13
 voiceSendBtn.BorderSizePixel = 0
@@ -347,7 +347,7 @@ allChatBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
 allChatBtn.Position = UDim2.new(0, 10, 0, 90)
 allChatBtn.Size = UDim2.new(0, 200, 0, 35)
 allChatBtn.Font = Enum.Font.GothamBold
-allChatBtn.Text = "  ðŸ“¢ All Chat TTS"
+allChatBtn.Text = "  All Chat TTS"
 allChatBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
 allChatBtn.TextSize = 13
 allChatBtn.TextXAlignment = Enum.TextXAlignment.Left
@@ -401,8 +401,8 @@ local function createStyledModeButton(name, parent, xPos, yPos)
 	return btn, indicator
 end
 
-local filaBtn, filaIndicator = createStyledModeButton("ðŸ“‹ Fila", Content1, 14, 136)
-local newBtn, newIndicator = createStyledModeButton("âš¡ New", Content1, 114, 136)
+local filaBtn, filaIndicator = createStyledModeButton("Fila", Content1, 14, 136)
+local newBtn, newIndicator = createStyledModeButton("New", Content1, 114, 136)
 
 -- Separador 2
 local sep2 = Instance.new("Frame")
@@ -419,7 +419,7 @@ speedLabel.BackgroundTransparency = 1
 speedLabel.Position = UDim2.new(0, 12, 0, 188)
 speedLabel.Size = UDim2.new(0, 200, 0, 15)
 speedLabel.Font = Enum.Font.GothamMedium
-speedLabel.Text = "ðŸ”Š Velocidade: 1.0x"
+speedLabel.Text = "Velocidade: 1.0x"
 speedLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
 speedLabel.TextSize = 11
 speedLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -464,7 +464,7 @@ musicBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
 musicBtn.Position = UDim2.new(0, 10, 0, 5)
 musicBtn.Size = UDim2.new(0, 200, 0, 35)
 musicBtn.Font = Enum.Font.GothamBold
-musicBtn.Text = "  ðŸŽµ MÃºsica YouTube"
+musicBtn.Text = "  Musica YouTube"
 musicBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
 musicBtn.TextSize = 13
 musicBtn.TextXAlignment = Enum.TextXAlignment.Left
@@ -513,7 +513,7 @@ musicInputBox.BackgroundTransparency = 1
 musicInputBox.Position = UDim2.new(0, 8, 0, 0)
 musicInputBox.Size = UDim2.new(1, -12, 1, 0)
 musicInputBox.Font = Enum.Font.GothamMedium
-musicInputBox.PlaceholderText = "ðŸ” Nome da mÃºsica..."
+musicInputBox.PlaceholderText = "Nome da musica..."
 musicInputBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
 musicInputBox.Text = ""
 musicInputBox.TextColor3 = Color3.fromRGB(230, 230, 255)
@@ -534,7 +534,7 @@ musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
 musicPlayBtn.Position = UDim2.new(0, 18, 0, 90)
 musicPlayBtn.Size = UDim2.new(0, 184, 0, 32)
 musicPlayBtn.Font = Enum.Font.GothamBold
-musicPlayBtn.Text = "â–¶ Tocar"
+musicPlayBtn.Text = "Tocar"
 musicPlayBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 musicPlayBtn.TextSize = 13
 musicPlayBtn.BorderSizePixel = 0
@@ -571,7 +571,7 @@ playerPermissionBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
 playerPermissionBtn.Position = UDim2.new(0, 10, 0, 150)
 playerPermissionBtn.Size = UDim2.new(0, 200, 0, 35)
 playerPermissionBtn.Font = Enum.Font.GothamBold
-playerPermissionBtn.Text = "  ðŸ‘¥ Players /play"
+playerPermissionBtn.Text = "  Players /play"
 playerPermissionBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
 playerPermissionBtn.TextSize = 13
 playerPermissionBtn.TextXAlignment = Enum.TextXAlignment.Left
@@ -792,13 +792,13 @@ local function createStyledValueBox(parent, yPos, text)
 	return box
 end
 
-local flyBtn, flyIndicator = createStyledToggle("âœˆï¸", "Fly", Content3, 5)
+local flyBtn, flyIndicator = createStyledToggle("", "Fly", Content3, 5)
 local flySpeedBox = createStyledValueBox(Content3, 5, "65")
 
-local speedBtn, speedIndicator = createStyledToggle("ðŸ’¨", "Speed", Content3, 42)
+local speedBtn, speedIndicator = createStyledToggle("", "Speed", Content3, 42)
 local speedBox = createStyledValueBox(Content3, 42, "65")
 
-local jumpBtn, jumpIndicator = createStyledToggle("ðŸ¦˜", "SuperJump", Content3, 79)
+local jumpBtn, jumpIndicator = createStyledToggle("", "SuperJump", Content3, 79)
 local jumpBox = createStyledValueBox(Content3, 79, "100")
 
 -- Separador
@@ -809,9 +809,9 @@ sepPlayer1.Position = UDim2.new(0, 20, 0, 117)
 sepPlayer1.Size = UDim2.new(0, 180, 0, 1)
 sepPlayer1.BorderSizePixel = 0
 
-local freezeBtn, freezeIndicator = createStyledToggle("ðŸ§Š", "Congelar", Content3, 123)
-local noclipBtn, noclipIndicator = createStyledToggle("ðŸ‘»", "Noclip", Content3, 160)
-local telekinesisBtn, telekinesisIndicator = createStyledToggle("ðŸ”®", "Telecinese", Content3, 197)
+local freezeBtn, freezeIndicator = createStyledToggle("", "Congelar", Content3, 123)
+local noclipBtn, noclipIndicator = createStyledToggle("", "Noclip", Content3, 160)
+local telekinesisBtn, telekinesisIndicator = createStyledToggle("", "Telecinese", Content3, 197)
 
 -- Separador 2
 local sepPlayer2 = Instance.new("Frame")
@@ -828,7 +828,7 @@ tpBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
 tpBtn.Position = UDim2.new(0, 10, 0, 243)
 tpBtn.Size = UDim2.new(0, 160, 0, 32)
 tpBtn.Font = Enum.Font.GothamBold
-tpBtn.Text = "  ðŸ“ TP Players â–¼"
+tpBtn.Text = "  TP Players >>"
 tpBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
 tpBtn.TextSize = 12
 tpBtn.TextXAlignment = Enum.TextXAlignment.Left
@@ -882,7 +882,7 @@ PlayerListScroll.ScrollBarImageColor3 = Color3.fromRGB(100, 70, 220)
 PlayerListScroll.BorderSizePixel = 0
 
 -- ABA 4: GODMODE (Visual Moderno)
-local godBtn, godIndicator = createStyledToggle("ðŸ›¡ï¸", "Godmode", Content4, 5)
+local godBtn, godIndicator = createStyledToggle("", "Godmode", Content4, 5)
 
 -- Separador
 local sepGod1 = Instance.new("Frame")
@@ -898,7 +898,7 @@ healLabel.BackgroundTransparency = 1
 healLabel.Position = UDim2.new(0, 12, 0, 50)
 healLabel.Size = UDim2.new(0, 200, 0, 15)
 healLabel.Font = Enum.Font.GothamMedium
-healLabel.Text = "â¤ï¸ Cura Auto: 60%"
+healLabel.Text = "Cura Auto: 60%"
 healLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
 healLabel.TextSize = 11
 healLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -937,7 +937,7 @@ hpLabel.BackgroundTransparency = 1
 hpLabel.Position = UDim2.new(0, 12, 0, 85)
 hpLabel.Size = UDim2.new(0, 200, 0, 15)
 hpLabel.Font = Enum.Font.GothamMedium
-hpLabel.Text = "ðŸ’ª Vida MÃ¡xima: 200"
+hpLabel.Text = "Vida Maxima: 200"
 hpLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
 hpLabel.TextSize = 11
 hpLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -978,7 +978,7 @@ sepGod2.Position = UDim2.new(0, 20, 0, 127)
 sepGod2.Size = UDim2.new(0, 180, 0, 1)
 sepGod2.BorderSizePixel = 0
 
-local antiFallBtn, antiFallIndicator = createStyledToggle("ðŸª¨", "Anti-Queda", Content4, 133)
+local antiFallBtn, antiFallIndicator = createStyledToggle("", "Anti-Queda", Content4, 133)
 
 local function startFly()
     flying = true
@@ -1291,7 +1291,7 @@ UIS.InputChanged:Connect(function(input)
         God.HealThresh = 20 + (percentage * 75)
         healHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
         healFill.Size = UDim2.new(percentage, 0, 1, 0)
-        healLabel.Text = string.format("â¤ï¸ Cura Auto: %.0f%%", God.HealThresh)
+        healLabel.Text = string.format("Cura Auto: %.0f%%", God.HealThresh)
     end
 end)
 
@@ -1310,7 +1310,7 @@ UIS.InputChanged:Connect(function(input)
         God.BaseMaxHP = 100 + (percentage * 900)
         hpHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
         hpFill.Size = UDim2.new(percentage, 0, 1, 0)
-        hpLabel.Text = string.format("ðŸ’ª Vida MÃ¡xima: %.0f", God.BaseMaxHP)
+        hpLabel.Text = string.format("Vida Maxima: %.0f", God.BaseMaxHP)
     end
 end)
 
@@ -1381,7 +1381,7 @@ UIS.InputChanged:Connect(function(input)
         ttsSpeed = 1.0 + (percentage * 1.5)
         speedHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
         speedFill.Size = UDim2.new(percentage, 0, 1, 0)
-        speedLabel.Text = string.format("ðŸ”Š Velocidade: %.1fx", ttsSpeed)
+        speedLabel.Text = string.format("Velocidade: %.1fx", ttsSpeed)
         
         task.spawn(function()
             pcall(function()
@@ -1544,7 +1544,7 @@ local function searchMusic(query, playerName)
     end
     
     musicSearching = true
-    musicPlayBtn.Text = "â³ Buscando..."
+    musicPlayBtn.Text = "Buscando..."
     musicPlayBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
     
     task.spawn(function()
@@ -1569,14 +1569,14 @@ local function searchMusic(query, playerName)
                 print("[MUSIC] Encontrada:", data.title)
                 musicPlaying = true
                 musicSearching = false
-                musicPlayBtn.Text = "â¹ Interromper"
+                musicPlayBtn.Text = "Interromper"
                 musicPlayBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
                 setMusicPlayStyle(Color3.fromRGB(200, 60, 60), Color3.fromRGB(230, 80, 80))
             else
                 print("[MUSIC] NÃ£o encontrada")
                 musicPlaying = false
                 musicSearching = false
-                musicPlayBtn.Text = "â–¶ Tocar"
+                musicPlayBtn.Text = "Tocar"
                 musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
                 setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
             end
@@ -1584,7 +1584,7 @@ local function searchMusic(query, playerName)
             warn("[MUSIC] Erro na requisiÃ§Ã£o:", result)
             musicPlaying = false
             musicSearching = false
-            musicPlayBtn.Text = "â–¶ Tocar"
+            musicPlayBtn.Text = "Tocar"
             musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
             setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
         end
@@ -1718,7 +1718,7 @@ musicBtn.MouseButton1Click:Connect(function()
         playerPermissionIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
         musicPlaying = false
         musicSearching = false
-        musicPlayBtn.Text = "â–¶ Tocar"
+        musicPlayBtn.Text = "Tocar"
         musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
         setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
         print("[MUSIC] Players /play desativado automaticamente")
@@ -1773,7 +1773,7 @@ musicPlayBtn.MouseButton1Click:Connect(function()
         print("[MUSIC] Cancelando busca")
         musicSearching = false
         musicPlaying = false
-        musicPlayBtn.Text = "â–¶ Tocar"
+        musicPlayBtn.Text = "Tocar"
         musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
         setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
         stopMusic()
@@ -1783,7 +1783,7 @@ musicPlayBtn.MouseButton1Click:Connect(function()
     if musicPlaying then
         -- Interromper
         musicPlaying = false
-        musicPlayBtn.Text = "â–¶ Tocar"
+        musicPlayBtn.Text = "Tocar"
         musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
         setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
         stopMusic()

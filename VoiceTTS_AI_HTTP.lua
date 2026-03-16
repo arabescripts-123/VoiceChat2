@@ -707,6 +707,16 @@ local savedCollisions = {}
 
 RunService.Stepped:Connect(function()
     pcall(function()
+        -- Noclip manual tem prioridade
+        if noclipEnabled and player.Character then
+            for _, part in ipairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+            return
+        end
+        
         if not player.Character then return end
         local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
         if not myRoot then return end
@@ -1202,17 +1212,7 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
-RunService.Stepped:Connect(function()
-    if noclipEnabled and player.Character then
-        pcall(function()
-            for _, part in ipairs(player.Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
-            end
-        end)
-    end
-end)
+-- Noclip manual agora esta integrado no Stepped acima
 
 tpBtn.MouseButton1Click:Connect(function()
     PlayerListFrame.Visible = not PlayerListFrame.Visible
@@ -1518,15 +1518,12 @@ local function handleTTS(text, priority)
 end
 
 local function isPlayerNearby(plr)
-    if not plr.Character or not plr.Character:FindFirstChild("HumanoidRootPart") then
-        return false
-    end
-    if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-        return false
-    end
-    
-    local distance = (plr.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
-    return distance <= PROXIMITY_DISTANCE
+    pcall(function()
+        if not plr.Character or not plr.Character:FindFirstChild("HumanoidRootPart") then return false end
+        if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then return false end
+        return (plr.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude <= PROXIMITY_DISTANCE
+    end)
+    return false
 end
 
 -- Music Functions

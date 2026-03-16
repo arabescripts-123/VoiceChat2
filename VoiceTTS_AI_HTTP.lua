@@ -702,30 +702,31 @@ RunService.Heartbeat:Connect(function()
     end)
 end)
 
--- Noclip automÃ¡tico apenas com players (nÃ£o com objetos)
+-- Anti-colisao apenas com outros players (nao com objetos do mapa)
 RunService.Stepped:Connect(function()
     pcall(function()
         if not player.Character then return end
-        local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
-        if not myRoot then return end
+        local myParts = {}
+        for _, part in ipairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                table.insert(myParts, part)
+            end
+        end
         
         local nearPlayer = false
         for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
             if otherPlayer ~= player and otherPlayer.Character then
                 local otherRoot = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 10 then
+                local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
+                if otherRoot and myRoot and (myRoot.Position - otherRoot.Position).Magnitude < 10 then
                     nearPlayer = true
                     break
                 end
             end
         end
         
-        if nearPlayer then
-            for _, part in ipairs(player.Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
-            end
+        for _, part in ipairs(myParts) do
+            part.CanCollide = not nearPlayer
         end
     end)
 end)

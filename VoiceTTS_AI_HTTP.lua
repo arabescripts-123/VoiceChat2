@@ -30,106 +30,132 @@ ScreenGui.Parent = game.CoreGui
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+MainFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
 MainFrame.Position = UDim2.new(0.02, 0, 0.3, 0)
 MainFrame.Size = UDim2.new(0, 220, 0, 400)
 MainFrame.ClipsDescendants = true
+MainFrame.BorderSizePixel = 0
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Parent = MainFrame
+mainStroke.Color = Color3.fromRGB(70, 45, 150)
+mainStroke.Thickness = 1.5
+mainStroke.Transparency = 0.3
 
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 8)
-UICorner.Parent = MainFrame
-
-local UIStroke = Instance.new("UIStroke")
-UIStroke.Parent = MainFrame
-UIStroke.Color = Color3.fromRGB(0, 0, 0)
-UIStroke.Thickness = 3
+-- Header bar
+local headerBar = Instance.new("Frame")
+headerBar.Parent = MainFrame
+headerBar.BackgroundColor3 = Color3.fromRGB(28, 28, 40)
+headerBar.Size = UDim2.new(1, 0, 0, 36)
+headerBar.BorderSizePixel = 0
+Instance.new("UICorner", headerBar).CornerRadius = UDim.new(0, 12)
+-- Cobre cantos inferiores do header
+local headerFix = Instance.new("Frame")
+headerFix.Parent = headerBar
+headerFix.BackgroundColor3 = Color3.fromRGB(28, 28, 40)
+headerFix.Position = UDim2.new(0, 0, 1, -6)
+headerFix.Size = UDim2.new(1, 0, 0, 6)
+headerFix.BorderSizePixel = 0
 
 local Title = Instance.new("TextLabel")
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
-Title.Size = UDim2.new(1, -40, 0, 35)
+Title.Size = UDim2.new(1, -40, 0, 36)
 Title.Font = Enum.Font.GothamBold
-Title.Text = "AS VoiceTTS"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 16
+Title.Text = "🎙️ AS VoiceTTS"
+Title.TextColor3 = Color3.fromRGB(200, 180, 255)
+Title.TextSize = 14
 Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Position = UDim2.new(0, 12, 0, 0)
 Title.Active = true
 
--- Tabs Container com Scroll
+-- Linha separadora do header
+local headerLine = Instance.new("Frame")
+headerLine.Parent = MainFrame
+headerLine.BackgroundColor3 = Color3.fromRGB(70, 45, 150)
+headerLine.Position = UDim2.new(0, 10, 0, 36)
+headerLine.Size = UDim2.new(1, -20, 0, 1)
+headerLine.BorderSizePixel = 0
+headerLine.BackgroundTransparency = 0.5
+
+-- Tabs Container
 local TabsFrame = Instance.new("ScrollingFrame")
 TabsFrame.Parent = MainFrame
 TabsFrame.BackgroundTransparency = 1
-TabsFrame.Position = UDim2.new(0, 0, 0, 35)
-TabsFrame.Size = UDim2.new(1, 0, 0, 30)
-TabsFrame.ScrollBarThickness = 4
+TabsFrame.Position = UDim2.new(0, 0, 0, 40)
+TabsFrame.Size = UDim2.new(1, 0, 0, 28)
+TabsFrame.ScrollBarThickness = 2
+TabsFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 70, 220)
 TabsFrame.BorderSizePixel = 0
-TabsFrame.CanvasSize = UDim2.new(0, 400, 0, 30)
+TabsFrame.CanvasSize = UDim2.new(0, 310, 0, 28)
 TabsFrame.ScrollingDirection = Enum.ScrollingDirection.X
+
+local activeTabColor = Color3.fromRGB(80, 50, 160)
+local inactiveTabColor = Color3.fromRGB(35, 35, 50)
 
 local function createTab(name, pos)
     local tab = Instance.new("TextButton")
     tab.Parent = TabsFrame
-    tab.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    tab.BackgroundColor3 = inactiveTabColor
     tab.Position = UDim2.new(0, pos, 0, 0)
-    tab.Size = UDim2.new(0, 70, 0, 28)
-    tab.Font = Enum.Font.Gotham
+    tab.Size = UDim2.new(0, 72, 0, 26)
+    tab.Font = Enum.Font.GothamBold
     tab.Text = name
-    tab.TextColor3 = Color3.fromRGB(200, 200, 200)
+    tab.TextColor3 = Color3.fromRGB(170, 170, 200)
     tab.TextSize = 11
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
-    corner.Parent = tab
+    tab.BorderSizePixel = 0
+    Instance.new("UICorner", tab).CornerRadius = UDim.new(0, 8)
     return tab
 end
 
-local tab1 = createTab("Chat", 5)
-local tab2 = createTab("Música", 77)
-local tab3 = createTab("Player", 149)
-local tab4 = createTab("Godmode", 221)
+local tab1 = createTab("💬 Chat", 4)
+local tab2 = createTab("🎵 Música", 80)
+local tab3 = createTab("🎮 Player", 156)
+local tab4 = createTab("🛡️ God", 232)
 
 -- Content Frames
+local contentY = 72
 local Content1 = Instance.new("Frame")
 Content1.Parent = MainFrame
 Content1.BackgroundTransparency = 1
-Content1.Position = UDim2.new(0, 0, 0, 70)
-Content1.Size = UDim2.new(1, 0, 1, -70)
+Content1.Position = UDim2.new(0, 0, 0, contentY)
+Content1.Size = UDim2.new(1, 0, 1, -contentY)
 Content1.Visible = true
 
 local Content2 = Instance.new("Frame")
 Content2.Parent = MainFrame
 Content2.BackgroundTransparency = 1
-Content2.Position = UDim2.new(0, 0, 0, 70)
-Content2.Size = UDim2.new(1, 0, 1, -70)
+Content2.Position = UDim2.new(0, 0, 0, contentY)
+Content2.Size = UDim2.new(1, 0, 1, -contentY)
 Content2.Visible = false
 
 local Content3 = Instance.new("Frame")
 Content3.Parent = MainFrame
 Content3.BackgroundTransparency = 1
-Content3.Position = UDim2.new(0, 0, 0, 70)
-Content3.Size = UDim2.new(1, 0, 1, -70)
+Content3.Position = UDim2.new(0, 0, 0, contentY)
+Content3.Size = UDim2.new(1, 0, 1, -contentY)
 Content3.Visible = false
 
 local Content4 = Instance.new("Frame")
 Content4.Parent = MainFrame
 Content4.BackgroundTransparency = 1
-Content4.Position = UDim2.new(0, 0, 0, 70)
-Content4.Size = UDim2.new(1, 0, 1, -70)
+Content4.Position = UDim2.new(0, 0, 0, contentY)
+Content4.Size = UDim2.new(1, 0, 1, -contentY)
 Content4.Visible = false
 
+-- Rejoin estilizado
 local rejoinBtn = Instance.new("TextButton")
 rejoinBtn.Parent = MainFrame
-rejoinBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-rejoinBtn.Position = UDim2.new(1, -35, 0, 3)
-rejoinBtn.Size = UDim2.new(0, 30, 0, 28)
+rejoinBtn.BackgroundColor3 = Color3.fromRGB(160, 40, 40)
+rejoinBtn.Position = UDim2.new(1, -34, 0, 5)
+rejoinBtn.Size = UDim2.new(0, 26, 0, 26)
 rejoinBtn.Font = Enum.Font.GothamBold
-rejoinBtn.Text = "R"
-rejoinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-rejoinBtn.TextSize = 14
-
-local rejoinCorner = Instance.new("UICorner")
-rejoinCorner.CornerRadius = UDim.new(0, 6)
-rejoinCorner.Parent = rejoinBtn
+rejoinBtn.Text = "🔄"
+rejoinBtn.TextColor3 = Color3.fromRGB(255, 200, 200)
+rejoinBtn.TextSize = 13
+rejoinBtn.BorderSizePixel = 0
+Instance.new("UICorner", rejoinBtn).CornerRadius = UDim.new(1, 0)
+addHover(rejoinBtn, Color3.fromRGB(160, 40, 40), Color3.fromRGB(200, 55, 55))
 
 -- Dragging
 local dragging, dragInput, dragStart, startPos
@@ -237,144 +263,306 @@ local function createModeButton(name, parent, xPos, yPos)
     return btn, indicator
 end
 
--- ABA 1: CHAT
+-- ABA 1: CHAT (Visual Moderno)
+local TweenService = game:GetService("TweenService")
+local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+local function addHover(btn, normalColor, hoverColor)
+	btn.MouseEnter:Connect(function()
+		TweenService:Create(btn, tweenInfo, {BackgroundColor3 = hoverColor}):Play()
+	end)
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn, tweenInfo, {BackgroundColor3 = normalColor}):Play()
+	end)
+end
+
+-- Input Box estilizado
+local inputContainer = Instance.new("Frame")
+inputContainer.Parent = Content1
+inputContainer.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+inputContainer.Position = UDim2.new(0, 10, 0, 5)
+inputContainer.Size = UDim2.new(0, 200, 0, 34)
+inputContainer.BorderSizePixel = 0
+Instance.new("UICorner", inputContainer).CornerRadius = UDim.new(0, 10)
+local inputStroke = Instance.new("UIStroke")
+inputStroke.Parent = inputContainer
+inputStroke.Color = Color3.fromRGB(90, 60, 220)
+inputStroke.Thickness = 1.5
+inputStroke.Transparency = 0.3
+
 local voiceInputBox = Instance.new("TextBox")
-voiceInputBox.Parent = Content1
-voiceInputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-voiceInputBox.Position = UDim2.new(0, 10, 0, 5)
-voiceInputBox.Size = UDim2.new(0, 200, 0, 30)
-voiceInputBox.Font = Enum.Font.Gotham
-voiceInputBox.PlaceholderText = "Digite para falar..."
+voiceInputBox.Parent = inputContainer
+voiceInputBox.BackgroundTransparency = 1
+voiceInputBox.Position = UDim2.new(0, 10, 0, 0)
+voiceInputBox.Size = UDim2.new(1, -15, 1, 0)
+voiceInputBox.Font = Enum.Font.GothamMedium
+voiceInputBox.PlaceholderText = "💬 Digite para falar..."
+voiceInputBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
 voiceInputBox.Text = ""
-voiceInputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+voiceInputBox.TextColor3 = Color3.fromRGB(230, 230, 255)
 voiceInputBox.TextSize = 12
 voiceInputBox.ClearTextOnFocus = false
 
-local voiceInputCorner = Instance.new("UICorner")
-voiceInputCorner.CornerRadius = UDim.new(0, 6)
-voiceInputCorner.Parent = voiceInputBox
+voiceInputBox.Focused:Connect(function()
+	TweenService:Create(inputStroke, tweenInfo, {Color = Color3.fromRGB(130, 90, 255), Transparency = 0}):Play()
+end)
+voiceInputBox.FocusLost:Connect(function()
+	TweenService:Create(inputStroke, tweenInfo, {Color = Color3.fromRGB(90, 60, 220), Transparency = 0.3}):Play()
+end)
 
-local voiceSendBtn = createSimpleButton("Falar", Content1, 40)
+-- Botão Falar estilizado
+local voiceSendBtn = Instance.new("TextButton")
+voiceSendBtn.Parent = Content1
+voiceSendBtn.BackgroundColor3 = Color3.fromRGB(100, 60, 220)
+voiceSendBtn.Position = UDim2.new(0, 10, 0, 44)
+voiceSendBtn.Size = UDim2.new(0, 200, 0, 32)
+voiceSendBtn.Font = Enum.Font.GothamBold
+voiceSendBtn.Text = "🎤 Falar"
+voiceSendBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+voiceSendBtn.TextSize = 13
+voiceSendBtn.BorderSizePixel = 0
+Instance.new("UICorner", voiceSendBtn).CornerRadius = UDim.new(0, 10)
+addHover(voiceSendBtn, Color3.fromRGB(100, 60, 220), Color3.fromRGB(130, 85, 255))
 
-local allChatBtn, allChatIndicator = createButton("All Chat TTS", Content1, 85)
+-- Separador
+local sep1 = Instance.new("Frame")
+sep1.Parent = Content1
+sep1.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+sep1.Position = UDim2.new(0, 20, 0, 82)
+sep1.Size = UDim2.new(0, 180, 0, 1)
+sep1.BorderSizePixel = 0
 
--- Background para Fila e New
+-- All Chat TTS estilizado
+local allChatBtn = Instance.new("TextButton")
+allChatBtn.Parent = Content1
+allChatBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+allChatBtn.Position = UDim2.new(0, 10, 0, 90)
+allChatBtn.Size = UDim2.new(0, 200, 0, 35)
+allChatBtn.Font = Enum.Font.GothamBold
+allChatBtn.Text = "  📢 All Chat TTS"
+allChatBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
+allChatBtn.TextSize = 13
+allChatBtn.TextXAlignment = Enum.TextXAlignment.Left
+allChatBtn.BorderSizePixel = 0
+Instance.new("UICorner", allChatBtn).CornerRadius = UDim.new(0, 10)
+addHover(allChatBtn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
+
+local allChatIndicator = Instance.new("Frame")
+allChatIndicator.Parent = allChatBtn
+allChatIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+allChatIndicator.Position = UDim2.new(1, -28, 0.5, -8)
+allChatIndicator.Size = UDim2.new(0, 16, 0, 16)
+allChatIndicator.BorderSizePixel = 0
+Instance.new("UICorner", allChatIndicator).CornerRadius = UDim.new(1, 0)
+
+-- Background Fila/New com gradiente
 local modeBackground = Instance.new("Frame")
 modeBackground.Parent = Content1
-modeBackground.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-modeBackground.Position = UDim2.new(0, 10, 0, 120)
-modeBackground.Size = UDim2.new(0, 200, 0, 45)
+modeBackground.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+modeBackground.Position = UDim2.new(0, 10, 0, 130)
+modeBackground.Size = UDim2.new(0, 200, 0, 42)
 modeBackground.BorderSizePixel = 0
+Instance.new("UICorner", modeBackground).CornerRadius = UDim.new(0, 10)
+local modeStroke = Instance.new("UIStroke")
+modeStroke.Parent = modeBackground
+modeStroke.Color = Color3.fromRGB(60, 60, 80)
+modeStroke.Thickness = 1
 
-local modeBackgroundCorner = Instance.new("UICorner")
-modeBackgroundCorner.CornerRadius = UDim.new(0, 6)
-modeBackgroundCorner.Parent = modeBackground
+local function createStyledModeButton(name, parent, xPos, yPos)
+	local btn = Instance.new("TextButton")
+	btn.Parent = parent
+	btn.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+	btn.Position = UDim2.new(0, xPos, 0, yPos)
+	btn.Size = UDim2.new(0, 92, 0, 30)
+	btn.Font = Enum.Font.GothamBold
+	btn.Text = name
+	btn.TextColor3 = Color3.fromRGB(200, 200, 220)
+	btn.TextSize = 12
+	btn.BorderSizePixel = 0
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+	addHover(btn, Color3.fromRGB(50, 50, 70), Color3.fromRGB(70, 65, 100))
 
-local filaBtn, filaIndicator = createModeButton("Fila", Content1, 10, 130)
-local newBtn, newIndicator = createModeButton("New", Content1, 115, 130)
+	local indicator = Instance.new("Frame")
+	indicator.Parent = btn
+	indicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+	indicator.Position = UDim2.new(1, -20, 0.5, -6)
+	indicator.Size = UDim2.new(0, 12, 0, 12)
+	indicator.BorderSizePixel = 0
+	Instance.new("UICorner", indicator).CornerRadius = UDim.new(1, 0)
 
+	return btn, indicator
+end
+
+local filaBtn, filaIndicator = createStyledModeButton("📋 Fila", Content1, 14, 136)
+local newBtn, newIndicator = createStyledModeButton("⚡ New", Content1, 114, 136)
+
+-- Separador 2
+local sep2 = Instance.new("Frame")
+sep2.Parent = Content1
+sep2.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+sep2.Position = UDim2.new(0, 20, 0, 180)
+sep2.Size = UDim2.new(0, 180, 0, 1)
+sep2.BorderSizePixel = 0
+
+-- Speed Label estilizado
 local speedLabel = Instance.new("TextLabel")
 speedLabel.Parent = Content1
 speedLabel.BackgroundTransparency = 1
-speedLabel.Position = UDim2.new(0, 10, 0, 170)
+speedLabel.Position = UDim2.new(0, 12, 0, 188)
 speedLabel.Size = UDim2.new(0, 200, 0, 15)
-speedLabel.Font = Enum.Font.Gotham
-speedLabel.Text = "Velocidade: 1.0x"
-speedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+speedLabel.Font = Enum.Font.GothamMedium
+speedLabel.Text = "🔊 Velocidade: 1.0x"
+speedLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
 speedLabel.TextSize = 11
 speedLabel.TextXAlignment = Enum.TextXAlignment.Left
 
+-- Speed Track estilizado
 local speedTrack = Instance.new("Frame")
 speedTrack.Parent = Content1
-speedTrack.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-speedTrack.Position = UDim2.new(0, 10, 0, 190)
-speedTrack.Size = UDim2.new(0, 200, 0, 6)
+speedTrack.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+speedTrack.Position = UDim2.new(0, 12, 0, 208)
+speedTrack.Size = UDim2.new(0, 196, 0, 6)
 speedTrack.BorderSizePixel = 0
+Instance.new("UICorner", speedTrack).CornerRadius = UDim.new(1, 0)
 
-local speedTrackCorner = Instance.new("UICorner")
-speedTrackCorner.CornerRadius = UDim.new(1, 0)
-speedTrackCorner.Parent = speedTrack
+-- Preenchimento colorido do track
+local speedFill = Instance.new("Frame")
+speedFill.Parent = speedTrack
+speedFill.BackgroundColor3 = Color3.fromRGB(100, 60, 220)
+speedFill.Size = UDim2.new(0, 0, 1, 0)
+speedFill.BorderSizePixel = 0
+Instance.new("UICorner", speedFill).CornerRadius = UDim.new(1, 0)
 
+-- Handle com glow
 local speedHandle = Instance.new("Frame")
 speedHandle.Parent = speedTrack
-speedHandle.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+speedHandle.BackgroundColor3 = Color3.fromRGB(150, 120, 255)
 speedHandle.Position = UDim2.new(0, 0, 0.5, -8)
 speedHandle.Size = UDim2.new(0, 16, 0, 16)
 speedHandle.BorderSizePixel = 0
+Instance.new("UICorner", speedHandle).CornerRadius = UDim.new(1, 0)
+local handleGlow = Instance.new("UIStroke")
+handleGlow.Parent = speedHandle
+handleGlow.Color = Color3.fromRGB(130, 90, 255)
+handleGlow.Thickness = 2
+handleGlow.Transparency = 0.4
 
-local speedHandleCorner = Instance.new("UICorner")
-speedHandleCorner.CornerRadius = UDim.new(1, 0)
-speedHandleCorner.Parent = speedHandle
+-- ABA 2: MÚSICA (Visual Moderno)
 
--- ABA 2: MÚSICA
-local musicBtn, musicIndicator = createButton("Música YouTube", Content2, 5)
+-- Botão toggle YouTube estilizado
+local musicBtn = Instance.new("TextButton")
+musicBtn.Parent = Content2
+musicBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+musicBtn.Position = UDim2.new(0, 10, 0, 5)
+musicBtn.Size = UDim2.new(0, 200, 0, 35)
+musicBtn.Font = Enum.Font.GothamBold
+musicBtn.Text = "  🎵 Música YouTube"
+musicBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
+musicBtn.TextSize = 13
+musicBtn.TextXAlignment = Enum.TextXAlignment.Left
+musicBtn.BorderSizePixel = 0
+Instance.new("UICorner", musicBtn).CornerRadius = UDim.new(0, 10)
+addHover(musicBtn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
 
--- Background para elementos de música
+local musicIndicator = Instance.new("Frame")
+musicIndicator.Parent = musicBtn
+musicIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+musicIndicator.Position = UDim2.new(1, -28, 0.5, -8)
+musicIndicator.Size = UDim2.new(0, 16, 0, 16)
+musicIndicator.BorderSizePixel = 0
+Instance.new("UICorner", musicIndicator).CornerRadius = UDim.new(1, 0)
+
+-- Background container para busca + tocar
 local musicBackground = Instance.new("Frame")
 musicBackground.Parent = Content2
-musicBackground.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-musicBackground.Position = UDim2.new(0, 10, 0, 40)
-musicBackground.Size = UDim2.new(0, 200, 0, 130)
+musicBackground.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+musicBackground.Position = UDim2.new(0, 10, 0, 45)
+musicBackground.Size = UDim2.new(0, 200, 0, 90)
 musicBackground.BorderSizePixel = 0
+Instance.new("UICorner", musicBackground).CornerRadius = UDim.new(0, 10)
+local musicBgStroke = Instance.new("UIStroke")
+musicBgStroke.Parent = musicBackground
+musicBgStroke.Color = Color3.fromRGB(60, 60, 80)
+musicBgStroke.Thickness = 1
 
-local musicBackgroundCorner = Instance.new("UICorner")
-musicBackgroundCorner.CornerRadius = UDim.new(0, 6)
-musicBackgroundCorner.Parent = musicBackground
+-- Input de busca estilizado
+local musicInputContainer = Instance.new("Frame")
+musicInputContainer.Parent = Content2
+musicInputContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+musicInputContainer.Position = UDim2.new(0, 18, 0, 52)
+musicInputContainer.Size = UDim2.new(0, 184, 0, 30)
+musicInputContainer.BorderSizePixel = 0
+Instance.new("UICorner", musicInputContainer).CornerRadius = UDim.new(0, 8)
+local musicInputStroke = Instance.new("UIStroke")
+musicInputStroke.Parent = musicInputContainer
+musicInputStroke.Color = Color3.fromRGB(30, 180, 80)
+musicInputStroke.Thickness = 1.5
+musicInputStroke.Transparency = 0.4
 
 local musicInputBox = Instance.new("TextBox")
-musicInputBox.Parent = Content2
-musicInputBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-musicInputBox.Position = UDim2.new(0, 10, 0, 50)
-musicInputBox.Size = UDim2.new(0, 200, 0, 30)
-musicInputBox.Font = Enum.Font.Gotham
-musicInputBox.PlaceholderText = "Nome da música..."
+musicInputBox.Parent = musicInputContainer
+musicInputBox.BackgroundTransparency = 1
+musicInputBox.Position = UDim2.new(0, 8, 0, 0)
+musicInputBox.Size = UDim2.new(1, -12, 1, 0)
+musicInputBox.Font = Enum.Font.GothamMedium
+musicInputBox.PlaceholderText = "🔍 Nome da música..."
+musicInputBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
 musicInputBox.Text = ""
-musicInputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+musicInputBox.TextColor3 = Color3.fromRGB(230, 230, 255)
 musicInputBox.TextSize = 12
 musicInputBox.ClearTextOnFocus = false
 
-local musicInputCorner = Instance.new("UICorner")
-musicInputCorner.CornerRadius = UDim.new(0, 6)
-musicInputCorner.Parent = musicInputBox
+musicInputBox.Focused:Connect(function()
+	TweenService:Create(musicInputStroke, tweenInfo, {Color = Color3.fromRGB(50, 220, 110), Transparency = 0}):Play()
+end)
+musicInputBox.FocusLost:Connect(function()
+	TweenService:Create(musicInputStroke, tweenInfo, {Color = Color3.fromRGB(30, 180, 80), Transparency = 0.4}):Play()
+end)
 
+-- Botão Tocar estilizado (verde Spotify)
 local musicPlayBtn = Instance.new("TextButton")
 musicPlayBtn.Parent = Content2
-musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 215, 96)
-musicPlayBtn.Position = UDim2.new(0, 10, 0, 90)
-musicPlayBtn.Size = UDim2.new(0, 200, 0, 30)
+musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
+musicPlayBtn.Position = UDim2.new(0, 18, 0, 90)
+musicPlayBtn.Size = UDim2.new(0, 184, 0, 32)
 musicPlayBtn.Font = Enum.Font.GothamBold
-musicPlayBtn.Text = "Tocar"
+musicPlayBtn.Text = "▶ Tocar"
 musicPlayBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 musicPlayBtn.TextSize = 13
+musicPlayBtn.BorderSizePixel = 0
+Instance.new("UICorner", musicPlayBtn).CornerRadius = UDim.new(0, 10)
+addHover(musicPlayBtn, Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
 
-local musicPlayCorner = Instance.new("UICorner")
-musicPlayCorner.CornerRadius = UDim.new(0, 6)
-musicPlayCorner.Parent = musicPlayBtn
+-- Separador
+local sepMusic = Instance.new("Frame")
+sepMusic.Parent = Content2
+sepMusic.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+sepMusic.Position = UDim2.new(0, 20, 0, 142)
+sepMusic.Size = UDim2.new(0, 180, 0, 1)
+sepMusic.BorderSizePixel = 0
 
+-- Botão Players /play estilizado
 local playerPermissionBtn = Instance.new("TextButton")
 playerPermissionBtn.Parent = Content2
-playerPermissionBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-playerPermissionBtn.Position = UDim2.new(0, 10, 0, 130)
+playerPermissionBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+playerPermissionBtn.Position = UDim2.new(0, 10, 0, 150)
 playerPermissionBtn.Size = UDim2.new(0, 200, 0, 35)
-playerPermissionBtn.Font = Enum.Font.Gotham
-playerPermissionBtn.Text = "Players /play"
-playerPermissionBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+playerPermissionBtn.Font = Enum.Font.GothamBold
+playerPermissionBtn.Text = "  👥 Players /play"
+playerPermissionBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
 playerPermissionBtn.TextSize = 13
-
-local playerPermissionCorner = Instance.new("UICorner")
-playerPermissionCorner.CornerRadius = UDim.new(0, 6)
-playerPermissionCorner.Parent = playerPermissionBtn
+playerPermissionBtn.TextXAlignment = Enum.TextXAlignment.Left
+playerPermissionBtn.BorderSizePixel = 0
+Instance.new("UICorner", playerPermissionBtn).CornerRadius = UDim.new(0, 10)
+addHover(playerPermissionBtn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
 
 local playerPermissionIndicator = Instance.new("Frame")
 playerPermissionIndicator.Parent = playerPermissionBtn
 playerPermissionIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-playerPermissionIndicator.Position = UDim2.new(1, -25, 0.5, -8)
+playerPermissionIndicator.Position = UDim2.new(1, -28, 0.5, -8)
 playerPermissionIndicator.Size = UDim2.new(0, 16, 0, 16)
 playerPermissionIndicator.BorderSizePixel = 0
-
-local playerPermissionIndicatorCorner = Instance.new("UICorner")
-playerPermissionIndicatorCorner.CornerRadius = UDim.new(1, 0)
-playerPermissionIndicatorCorner.Parent = playerPermissionIndicator
+Instance.new("UICorner", playerPermissionIndicator).CornerRadius = UDim.new(1, 0)
 
 -- ABA 3: PLAYER
 local RunService = game:GetService("RunService")
@@ -519,160 +707,255 @@ RunService.Stepped:Connect(function()
     end)
 end)
 
-local function createValueBox(parent, yPos, text)
-    local box = Instance.new("TextBox")
-    box.Parent = parent
-    box.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    box.Position = UDim2.new(0, 165, 0, yPos)
-    box.Size = UDim2.new(0, 45, 0, 35)
-    box.Font = Enum.Font.Gotham
-    box.Text = text
-    box.TextColor3 = Color3.fromRGB(255, 255, 255)
-    box.TextSize = 12
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 6)
-    corner.Parent = box
-    return box
+-- ABA 3: PLAYER (Visual Moderno)
+
+local function createStyledToggle(icon, name, parent, yPos)
+	local btn = Instance.new("TextButton")
+	btn.Parent = parent
+	btn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+	btn.Position = UDim2.new(0, 10, 0, yPos)
+	btn.Size = UDim2.new(0, 155, 0, 32)
+	btn.Font = Enum.Font.GothamBold
+	btn.Text = "  " .. icon .. " " .. name
+	btn.TextColor3 = Color3.fromRGB(220, 220, 240)
+	btn.TextSize = 12
+	btn.TextXAlignment = Enum.TextXAlignment.Left
+	btn.BorderSizePixel = 0
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+	addHover(btn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
+
+	local indicator = Instance.new("Frame")
+	indicator.Parent = btn
+	indicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+	indicator.Position = UDim2.new(1, -24, 0.5, -7)
+	indicator.Size = UDim2.new(0, 14, 0, 14)
+	indicator.BorderSizePixel = 0
+	Instance.new("UICorner", indicator).CornerRadius = UDim.new(1, 0)
+
+	return btn, indicator
 end
 
-local flyBtn, flyIndicator = createButton("Fly", Content3, 5)
-local flySpeedBox = createValueBox(Content3, 5, "65")
+local function createStyledValueBox(parent, yPos, text)
+	local container = Instance.new("Frame")
+	container.Parent = parent
+	container.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+	container.Position = UDim2.new(0, 170, 0, yPos)
+	container.Size = UDim2.new(0, 40, 0, 32)
+	container.BorderSizePixel = 0
+	Instance.new("UICorner", container).CornerRadius = UDim.new(0, 8)
+	local boxStroke = Instance.new("UIStroke")
+	boxStroke.Parent = container
+	boxStroke.Color = Color3.fromRGB(90, 60, 220)
+	boxStroke.Thickness = 1
+	boxStroke.Transparency = 0.4
 
-local speedBtn, speedIndicator = createButton("Speed", Content3, 50)
-local speedBox = createValueBox(Content3, 50, "65")
+	local box = Instance.new("TextBox")
+	box.Parent = container
+	box.BackgroundTransparency = 1
+	box.Position = UDim2.new(0, 0, 0, 0)
+	box.Size = UDim2.new(1, 0, 1, 0)
+	box.Font = Enum.Font.GothamBold
+	box.Text = text
+	box.TextColor3 = Color3.fromRGB(180, 160, 255)
+	box.TextSize = 12
 
-local jumpBtn, jumpIndicator = createButton("SuperJump", Content3, 95)
-local jumpBox = createValueBox(Content3, 95, "100")
+	box.Focused:Connect(function()
+		TweenService:Create(boxStroke, tweenInfo, {Color = Color3.fromRGB(130, 90, 255), Transparency = 0}):Play()
+	end)
+	box.FocusLost:Connect(function()
+		TweenService:Create(boxStroke, tweenInfo, {Color = Color3.fromRGB(90, 60, 220), Transparency = 0.4}):Play()
+	end)
 
-local freezeBtn, freezeIndicator = createButton("Congelar Posição", Content3, 140)
+	return box
+end
 
-local noclipBtn, noclipIndicator = createButton("Noclip", Content3, 185)
+local flyBtn, flyIndicator = createStyledToggle("✈️", "Fly", Content3, 5)
+local flySpeedBox = createStyledValueBox(Content3, 5, "65")
 
-local telekinesisBtn, telekinesisIndicator = createButton("Telecinese", Content3, 230)
+local speedBtn, speedIndicator = createStyledToggle("💨", "Speed", Content3, 42)
+local speedBox = createStyledValueBox(Content3, 42, "65")
 
+local jumpBtn, jumpIndicator = createStyledToggle("🦘", "SuperJump", Content3, 79)
+local jumpBox = createStyledValueBox(Content3, 79, "100")
+
+-- Separador
+local sepPlayer1 = Instance.new("Frame")
+sepPlayer1.Parent = Content3
+sepPlayer1.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+sepPlayer1.Position = UDim2.new(0, 20, 0, 117)
+sepPlayer1.Size = UDim2.new(0, 180, 0, 1)
+sepPlayer1.BorderSizePixel = 0
+
+local freezeBtn, freezeIndicator = createStyledToggle("🧊", "Congelar", Content3, 123)
+local noclipBtn, noclipIndicator = createStyledToggle("👻", "Noclip", Content3, 160)
+local telekinesisBtn, telekinesisIndicator = createStyledToggle("🔮", "Telecinese", Content3, 197)
+
+-- Separador 2
+local sepPlayer2 = Instance.new("Frame")
+sepPlayer2.Parent = Content3
+sepPlayer2.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+sepPlayer2.Position = UDim2.new(0, 20, 0, 236)
+sepPlayer2.Size = UDim2.new(0, 180, 0, 1)
+sepPlayer2.BorderSizePixel = 0
+
+-- TP Players estilizado
 local tpBtn = Instance.new("TextButton")
 tpBtn.Parent = Content3
-tpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-tpBtn.Position = UDim2.new(0, 10, 0, 275)
-tpBtn.Size = UDim2.new(0, 165, 0, 35)
-tpBtn.Font = Enum.Font.Gotham
-tpBtn.Text = "TP Players ▼"
-tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-tpBtn.TextSize = 13
-local tpCorner = Instance.new("UICorner")
-tpCorner.CornerRadius = UDim.new(0, 6)
-tpCorner.Parent = tpBtn
+tpBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+tpBtn.Position = UDim2.new(0, 10, 0, 243)
+tpBtn.Size = UDim2.new(0, 160, 0, 32)
+tpBtn.Font = Enum.Font.GothamBold
+tpBtn.Text = "  📍 TP Players ▼"
+tpBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
+tpBtn.TextSize = 12
+tpBtn.TextXAlignment = Enum.TextXAlignment.Left
+tpBtn.BorderSizePixel = 0
+Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 10)
+addHover(tpBtn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
 
+-- Click TP estilizado
 local clickTpBtn = Instance.new("TextButton")
 clickTpBtn.Parent = Content3
-clickTpBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-clickTpBtn.Position = UDim2.new(0, 180, 0, 275)
-clickTpBtn.Size = UDim2.new(0, 30, 0, 35)
+clickTpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+clickTpBtn.Position = UDim2.new(0, 175, 0, 243)
+clickTpBtn.Size = UDim2.new(0, 35, 0, 32)
 clickTpBtn.Text = "Q"
 clickTpBtn.Font = Enum.Font.GothamBold
-clickTpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+clickTpBtn.TextColor3 = Color3.fromRGB(180, 160, 255)
 clickTpBtn.TextSize = 14
-local clickTpCorner = Instance.new("UICorner")
-clickTpCorner.CornerRadius = UDim.new(0, 6)
-clickTpCorner.Parent = clickTpBtn
+clickTpBtn.BorderSizePixel = 0
+Instance.new("UICorner", clickTpBtn).CornerRadius = UDim.new(0, 10)
+addHover(clickTpBtn, Color3.fromRGB(50, 50, 70), Color3.fromRGB(70, 65, 100))
 
 local clickTpIndicator = Instance.new("Frame")
 clickTpIndicator.Parent = clickTpBtn
 clickTpIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-clickTpIndicator.Position = UDim2.new(1, -10, 0, 3)
+clickTpIndicator.Position = UDim2.new(1, -12, 0, 3)
 clickTpIndicator.Size = UDim2.new(0, 8, 0, 8)
 clickTpIndicator.BorderSizePixel = 0
-local clickTpIndicatorCorner = Instance.new("UICorner")
-clickTpIndicatorCorner.CornerRadius = UDim.new(1, 0)
-clickTpIndicatorCorner.Parent = clickTpIndicator
+Instance.new("UICorner", clickTpIndicator).CornerRadius = UDim.new(1, 0)
 
+-- Player List estilizado
 local PlayerListFrame = Instance.new("Frame")
 PlayerListFrame.Parent = Content3
-PlayerListFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-PlayerListFrame.Position = UDim2.new(0, 10, 0, 315)
+PlayerListFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
+PlayerListFrame.Position = UDim2.new(0, 10, 0, 280)
 PlayerListFrame.Size = UDim2.new(0, 200, 0, 60)
 PlayerListFrame.Visible = false
-local listCorner = Instance.new("UICorner")
-listCorner.CornerRadius = UDim.new(0, 8)
-listCorner.Parent = PlayerListFrame
+PlayerListFrame.BorderSizePixel = 0
+Instance.new("UICorner", PlayerListFrame).CornerRadius = UDim.new(0, 10)
 local listStroke = Instance.new("UIStroke")
 listStroke.Parent = PlayerListFrame
-listStroke.Color = Color3.fromRGB(0, 0, 0)
-listStroke.Thickness = 3
+listStroke.Color = Color3.fromRGB(90, 60, 220)
+listStroke.Thickness = 1
+listStroke.Transparency = 0.3
 
 local PlayerListScroll = Instance.new("ScrollingFrame")
 PlayerListScroll.Parent = PlayerListFrame
 PlayerListScroll.BackgroundTransparency = 1
 PlayerListScroll.Size = UDim2.new(1, 0, 1, 0)
-PlayerListScroll.ScrollBarThickness = 4
+PlayerListScroll.ScrollBarThickness = 3
+PlayerListScroll.ScrollBarImageColor3 = Color3.fromRGB(100, 70, 220)
 PlayerListScroll.BorderSizePixel = 0
 
--- ABA 4: GODMODE ELEMENTS
-local godBtn, godIndicator = createButton("Godmode", Content4, 5)
+-- ABA 4: GODMODE (Visual Moderno)
+local godBtn, godIndicator = createStyledToggle("🛡️", "Godmode", Content4, 5)
+
+-- Separador
+local sepGod1 = Instance.new("Frame")
+sepGod1.Parent = Content4
+sepGod1.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+sepGod1.Position = UDim2.new(0, 20, 0, 43)
+sepGod1.Size = UDim2.new(0, 180, 0, 1)
+sepGod1.BorderSizePixel = 0
 
 local healLabel = Instance.new("TextLabel")
 healLabel.Parent = Content4
 healLabel.BackgroundTransparency = 1
-healLabel.Position = UDim2.new(0, 10, 0, 50)
+healLabel.Position = UDim2.new(0, 12, 0, 50)
 healLabel.Size = UDim2.new(0, 200, 0, 15)
-healLabel.Font = Enum.Font.Gotham
-healLabel.Text = "Cura Auto: 60%"
-healLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+healLabel.Font = Enum.Font.GothamMedium
+healLabel.Text = "❤️ Cura Auto: 60%"
+healLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
 healLabel.TextSize = 11
 healLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 local healSlider = Instance.new("Frame")
 healSlider.Parent = Content4
-healSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-healSlider.Position = UDim2.new(0, 10, 0, 70)
-healSlider.Size = UDim2.new(0, 200, 0, 6)
+healSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+healSlider.Position = UDim2.new(0, 12, 0, 70)
+healSlider.Size = UDim2.new(0, 196, 0, 6)
 healSlider.BorderSizePixel = 0
-local healSliderCorner = Instance.new("UICorner")
-healSliderCorner.CornerRadius = UDim.new(1, 0)
-healSliderCorner.Parent = healSlider
+Instance.new("UICorner", healSlider).CornerRadius = UDim.new(1, 0)
+
+local healFill = Instance.new("Frame")
+healFill.Parent = healSlider
+healFill.BackgroundColor3 = Color3.fromRGB(220, 60, 80)
+healFill.Size = UDim2.new(0.5, 0, 1, 0)
+healFill.BorderSizePixel = 0
+Instance.new("UICorner", healFill).CornerRadius = UDim.new(1, 0)
 
 local healHandle = Instance.new("Frame")
 healHandle.Parent = healSlider
-healHandle.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+healHandle.BackgroundColor3 = Color3.fromRGB(255, 120, 140)
 healHandle.Position = UDim2.new(0.5, 0, 0.5, -8)
 healHandle.Size = UDim2.new(0, 16, 0, 16)
 healHandle.BorderSizePixel = 0
-local healHandleCorner = Instance.new("UICorner")
-healHandleCorner.CornerRadius = UDim.new(1, 0)
-healHandleCorner.Parent = healHandle
+Instance.new("UICorner", healHandle).CornerRadius = UDim.new(1, 0)
+local healGlow = Instance.new("UIStroke")
+healGlow.Parent = healHandle
+healGlow.Color = Color3.fromRGB(220, 60, 80)
+healGlow.Thickness = 2
+healGlow.Transparency = 0.4
 
 local hpLabel = Instance.new("TextLabel")
 hpLabel.Parent = Content4
 hpLabel.BackgroundTransparency = 1
-hpLabel.Position = UDim2.new(0, 10, 0, 90)
+hpLabel.Position = UDim2.new(0, 12, 0, 85)
 hpLabel.Size = UDim2.new(0, 200, 0, 15)
-hpLabel.Font = Enum.Font.Gotham
-hpLabel.Text = "Vida Máxima: 200"
-hpLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+hpLabel.Font = Enum.Font.GothamMedium
+hpLabel.Text = "💪 Vida Máxima: 200"
+hpLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
 hpLabel.TextSize = 11
 hpLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 local hpSlider = Instance.new("Frame")
 hpSlider.Parent = Content4
-hpSlider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-hpSlider.Position = UDim2.new(0, 10, 0, 110)
-hpSlider.Size = UDim2.new(0, 200, 0, 6)
+hpSlider.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+hpSlider.Position = UDim2.new(0, 12, 0, 105)
+hpSlider.Size = UDim2.new(0, 196, 0, 6)
 hpSlider.BorderSizePixel = 0
-local hpSliderCorner = Instance.new("UICorner")
-hpSliderCorner.CornerRadius = UDim.new(1, 0)
-hpSliderCorner.Parent = hpSlider
+Instance.new("UICorner", hpSlider).CornerRadius = UDim.new(1, 0)
+
+local hpFill = Instance.new("Frame")
+hpFill.Parent = hpSlider
+hpFill.BackgroundColor3 = Color3.fromRGB(60, 180, 100)
+hpFill.Size = UDim2.new(0.11, 0, 1, 0)
+hpFill.BorderSizePixel = 0
+Instance.new("UICorner", hpFill).CornerRadius = UDim.new(1, 0)
 
 local hpHandle = Instance.new("Frame")
 hpHandle.Parent = hpSlider
-hpHandle.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+hpHandle.BackgroundColor3 = Color3.fromRGB(100, 230, 140)
 hpHandle.Position = UDim2.new(0.11, 0, 0.5, -8)
 hpHandle.Size = UDim2.new(0, 16, 0, 16)
 hpHandle.BorderSizePixel = 0
-local hpHandleCorner = Instance.new("UICorner")
-hpHandleCorner.CornerRadius = UDim.new(1, 0)
-hpHandleCorner.Parent = hpHandle
+Instance.new("UICorner", hpHandle).CornerRadius = UDim.new(1, 0)
+local hpGlow = Instance.new("UIStroke")
+hpGlow.Parent = hpHandle
+hpGlow.Color = Color3.fromRGB(60, 180, 100)
+hpGlow.Thickness = 2
+hpGlow.Transparency = 0.4
 
-local antiFallBtn, antiFallIndicator = createButton("Anti-Queda", Content4, 130)
+-- Separador
+local sepGod2 = Instance.new("Frame")
+sepGod2.Parent = Content4
+sepGod2.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+sepGod2.Position = UDim2.new(0, 20, 0, 127)
+sepGod2.Size = UDim2.new(0, 180, 0, 1)
+sepGod2.BorderSizePixel = 0
+
+local antiFallBtn, antiFallIndicator = createStyledToggle("🪨", "Anti-Queda", Content4, 133)
 
 local function startFly()
     flying = true
@@ -748,37 +1031,34 @@ local function updatePlayerList()
     for _, child in pairs(PlayerListScroll:GetChildren()) do
         if child:IsA("Frame") then child:Destroy() end
     end
-    local yPos = 0
+    local yPos = 2
     for _, plr in pairs(game.Players:GetPlayers()) do
         if plr ~= player then
             local frame = Instance.new("Frame")
             frame.Parent = PlayerListScroll
-            frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            frame.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
             frame.Position = UDim2.new(0, 5, 0, yPos)
-            frame.Size = UDim2.new(1, -10, 0, 40)
-            local corner = Instance.new("UICorner")
-            corner.CornerRadius = UDim.new(0, 6)
-            corner.Parent = frame
+            frame.Size = UDim2.new(1, -10, 0, 36)
+            frame.BorderSizePixel = 0
+            Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
             
             local img = Instance.new("ImageLabel")
             img.Parent = frame
             img.BackgroundTransparency = 1
-            img.Position = UDim2.new(0, 5, 0.5, -15)
-            img.Size = UDim2.new(0, 30, 0, 30)
+            img.Position = UDim2.new(0, 5, 0.5, -14)
+            img.Size = UDim2.new(0, 28, 0, 28)
             img.Image = "rbxthumb://type=AvatarHeadShot&id="..plr.UserId.."&w=48&h=48"
-            local imgCorner = Instance.new("UICorner")
-            imgCorner.CornerRadius = UDim.new(1, 0)
-            imgCorner.Parent = img
+            Instance.new("UICorner", img).CornerRadius = UDim.new(1, 0)
             
             local label = Instance.new("TextLabel")
             label.Parent = frame
             label.BackgroundTransparency = 1
-            label.Position = UDim2.new(0, 40, 0, 0)
-            label.Size = UDim2.new(1, -45, 1, 0)
-            label.Font = Enum.Font.Gotham
+            label.Position = UDim2.new(0, 38, 0, 0)
+            label.Size = UDim2.new(1, -43, 1, 0)
+            label.Font = Enum.Font.GothamMedium
             label.Text = plr.Name
-            label.TextColor3 = Color3.fromRGB(255, 255, 255)
-            label.TextSize = 12
+            label.TextColor3 = Color3.fromRGB(210, 210, 230)
+            label.TextSize = 11
             label.TextXAlignment = Enum.TextXAlignment.Left
             
             local btn = Instance.new("TextButton")
@@ -786,6 +1066,14 @@ local function updatePlayerList()
             btn.BackgroundTransparency = 1
             btn.Size = UDim2.new(1, 0, 1, 0)
             btn.Text = ""
+            
+            frame.MouseEnter:Connect(function()
+                TweenService:Create(frame, tweenInfo, {BackgroundColor3 = Color3.fromRGB(60, 55, 80)}):Play()
+            end)
+            frame.MouseLeave:Connect(function()
+                TweenService:Create(frame, tweenInfo, {BackgroundColor3 = Color3.fromRGB(45, 45, 60)}):Play()
+            end)
+            
             btn.MouseButton1Click:Connect(function()
                 pcall(function()
                     if player.Character and plr.Character then
@@ -798,7 +1086,7 @@ local function updatePlayerList()
                 end)
                 PlayerListFrame.Visible = false
             end)
-            yPos = yPos + 45
+            yPos = yPos + 40
         end
     end
     PlayerListScroll.CanvasSize = UDim2.new(0, 0, 0, yPos)
@@ -979,7 +1267,8 @@ UIS.InputChanged:Connect(function(input)
         local percentage = relativePos / trackSize
         God.HealThresh = 20 + (percentage * 75)
         healHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
-        healLabel.Text = string.format("Cura Auto: %.0f%%", God.HealThresh)
+        healFill.Size = UDim2.new(percentage, 0, 1, 0)
+        healLabel.Text = string.format("❤️ Cura Auto: %.0f%%", God.HealThresh)
     end
 end)
 
@@ -997,56 +1286,31 @@ UIS.InputChanged:Connect(function(input)
         local percentage = relativePos / trackSize
         God.BaseMaxHP = 100 + (percentage * 900)
         hpHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
-        hpLabel.Text = string.format("Vida Máxima: %.0f", God.BaseMaxHP)
+        hpFill.Size = UDim2.new(percentage, 0, 1, 0)
+        hpLabel.Text = string.format("💪 Vida Máxima: %.0f", God.BaseMaxHP)
     end
 end)
 
--- Tab System Logic
-tab1.MouseButton1Click:Connect(function()
-    Content1.Visible = true
-    Content2.Visible = false
-    Content3.Visible = false
-    Content4.Visible = false
-    tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-end)
+-- Tab System Logic com animação
+local tabs = {tab1, tab2, tab3, tab4}
+local contents = {Content1, Content2, Content3, Content4}
 
-tab2.MouseButton1Click:Connect(function()
-    Content1.Visible = false
-    Content2.Visible = true
-    Content3.Visible = false
-    Content4.Visible = false
-    tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab2.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-end)
+local function switchTab(index)
+	for i, t in ipairs(tabs) do
+		local isActive = (i == index)
+		contents[i].Visible = isActive
+		TweenService:Create(t, tweenInfo, {
+			BackgroundColor3 = isActive and activeTabColor or inactiveTabColor
+		}):Play()
+		t.TextColor3 = isActive and Color3.fromRGB(230, 220, 255) or Color3.fromRGB(170, 170, 200)
+	end
+end
 
-tab3.MouseButton1Click:Connect(function()
-    Content1.Visible = false
-    Content2.Visible = false
-    Content3.Visible = true
-    Content4.Visible = false
-    tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab3.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    tab4.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-end)
-
-tab4.MouseButton1Click:Connect(function()
-    Content1.Visible = false
-    Content2.Visible = false
-    Content3.Visible = false
-    Content4.Visible = true
-    tab1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab3.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    tab4.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-end)
-
-tab1.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+tab1.MouseButton1Click:Connect(function() switchTab(1) end)
+tab2.MouseButton1Click:Connect(function() switchTab(2) end)
+tab3.MouseButton1Click:Connect(function() switchTab(3) end)
+tab4.MouseButton1Click:Connect(function() switchTab(4) end)
+switchTab(1)
 
 -- Variables
 local allChatEnabled = false
@@ -1093,7 +1357,8 @@ UIS.InputChanged:Connect(function(input)
         
         ttsSpeed = 1.0 + (percentage * 1.5)
         speedHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
-        speedLabel.Text = string.format("Velocidade: %.1fx", ttsSpeed)
+        speedFill.Size = UDim2.new(percentage, 0, 1, 0)
+        speedLabel.Text = string.format("🔊 Velocidade: %.1fx", ttsSpeed)
         
         task.spawn(function()
             pcall(function()
@@ -1243,8 +1508,8 @@ local function searchMusic(query, playerName)
     end
     
     musicSearching = true
-    musicPlayBtn.Text = "Tocar"
-    musicPlayBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    musicPlayBtn.Text = "⏳ Buscando..."
+    musicPlayBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
     
     task.spawn(function()
         local success, result = pcall(function()
@@ -1268,21 +1533,24 @@ local function searchMusic(query, playerName)
                 print("[MUSIC] Encontrada:", data.title)
                 musicPlaying = true
                 musicSearching = false
-                musicPlayBtn.Text = "Interromper"
-                musicPlayBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+                musicPlayBtn.Text = "⏹ Interromper"
+                musicPlayBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+                addHover(musicPlayBtn, Color3.fromRGB(200, 60, 60), Color3.fromRGB(230, 80, 80))
             else
                 print("[MUSIC] Não encontrada")
                 musicPlaying = false
                 musicSearching = false
-                musicPlayBtn.Text = "Tocar"
-                musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 215, 96)
+                musicPlayBtn.Text = "▶ Tocar"
+                musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
+                addHover(musicPlayBtn, Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
             end
         else
             warn("[MUSIC] Erro na requisição:", result)
             musicPlaying = false
             musicSearching = false
-            musicPlayBtn.Text = "Tocar"
-            musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 215, 96)
+            musicPlayBtn.Text = "▶ Tocar"
+            musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
+            addHover(musicPlayBtn, Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
         end
     end)
 end
@@ -1427,8 +1695,9 @@ musicBtn.MouseButton1Click:Connect(function()
         playerPermissionIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
         musicPlaying = false
         musicSearching = false
-        musicPlayBtn.Text = "Tocar"
-        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 215, 96)
+        musicPlayBtn.Text = "▶ Tocar"
+        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
+        addHover(musicPlayBtn, Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
         print("[MUSIC] Players /play desativado automaticamente")
         print("[MUSIC] Parando música imediatamente")
         stopMusic()
@@ -1481,8 +1750,9 @@ musicPlayBtn.MouseButton1Click:Connect(function()
         print("[MUSIC] Cancelando busca")
         musicSearching = false
         musicPlaying = false
-        musicPlayBtn.Text = "Tocar"
-        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 215, 96)
+        musicPlayBtn.Text = "▶ Tocar"
+        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
+        addHover(musicPlayBtn, Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
         stopMusic()
         return
     end
@@ -1490,8 +1760,9 @@ musicPlayBtn.MouseButton1Click:Connect(function()
     if musicPlaying then
         -- Interromper
         musicPlaying = false
-        musicPlayBtn.Text = "Tocar"
-        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 215, 96)
+        musicPlayBtn.Text = "▶ Tocar"
+        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
+        addHover(musicPlayBtn, Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
         stopMusic()
         print("[MUSIC] Parado")
     else
@@ -1554,6 +1825,12 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     if input.KeyCode == Enum.KeyCode.Z then
         MainFrame.Visible = not MainFrame.Visible
+        if MainFrame.Visible then
+            MainFrame.Size = UDim2.new(0, 220, 0, 0)
+            TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 220, 0, 400)
+            }):Play()
+        end
     elseif input.KeyCode == Enum.KeyCode.F then
         flying = not flying
         if flying then startFly() else stopFly() end

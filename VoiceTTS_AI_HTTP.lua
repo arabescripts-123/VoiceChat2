@@ -703,30 +703,39 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -- Anti-colisao apenas com outros players (nao com objetos do mapa)
+local savedCollisions = {}
+
 RunService.Stepped:Connect(function()
     pcall(function()
         if not player.Character then return end
-        local myParts = {}
-        for _, part in ipairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                table.insert(myParts, part)
-            end
-        end
+        local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
+        if not myRoot then return end
         
         local nearPlayer = false
         for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
             if otherPlayer ~= player and otherPlayer.Character then
                 local otherRoot = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
-                local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
-                if otherRoot and myRoot and (myRoot.Position - otherRoot.Position).Magnitude < 10 then
+                if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 10 then
                     nearPlayer = true
                     break
                 end
             end
         end
         
-        for _, part in ipairs(myParts) do
-            part.CanCollide = not nearPlayer
+        if nearPlayer then
+            for _, part in ipairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    savedCollisions[part] = true
+                    part.CanCollide = false
+                end
+            end
+        else
+            for part in pairs(savedCollisions) do
+                if part and part.Parent then
+                    part.CanCollide = true
+                end
+            end
+            savedCollisions = {}
         end
     end)
 end)

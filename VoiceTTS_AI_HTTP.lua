@@ -729,6 +729,17 @@ RunService.Stepped:Connect(function()
             return
         end
         
+        -- Desativa anti-colisao quando fly esta ligado
+        if flying then
+            for part in pairs(savedCollisions) do
+                if part and part.Parent then
+                    part.CanCollide = true
+                end
+            end
+            savedCollisions = {}
+            return
+        end
+        
         if not player.Character then return end
         local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
         if not myRoot then return end

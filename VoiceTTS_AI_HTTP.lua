@@ -1046,7 +1046,14 @@ RunService.Heartbeat:Connect(function()
     if not flying or not player.Character then return end
     pcall(function()
         local root = player.Character:FindFirstChild("HumanoidRootPart")
+        local humanoid = player.Character:FindFirstChild("Humanoid")
         if not root or not bodyVelocity then return end
+        -- Desativa fly se sentou em algo
+        if humanoid and humanoid.Sit then
+            stopFly()
+            flyIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+            return
+        end
         local cam = workspace.CurrentCamera
         local moveDir = Vector3.zero
         if UIS:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end

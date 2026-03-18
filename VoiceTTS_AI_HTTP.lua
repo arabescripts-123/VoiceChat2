@@ -1070,21 +1070,18 @@ RunService.Heartbeat:Connect(function()
         if UIS:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0,1,0) end
         if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir = moveDir - Vector3.new(0,1,0) end
         local vel = moveDir.Magnitude > 0 and moveDir.Unit * flySpeed or Vector3.zero
-        -- Se sentado, move o veiculo
+        -- Se sentado, move o veiculo via CFrame
         if humanoid and humanoid.Sit and humanoid.SeatPart then
             local seat = humanoid.SeatPart
             local vehicleRoot = seat
-            -- Tenta achar a raiz do modelo do veiculo
             if seat.Parent and seat.Parent:IsA("Model") and seat.Parent.PrimaryPart then
                 vehicleRoot = seat.Parent.PrimaryPart
             end
-            -- Aplica velocidade no veiculo
-            vehicleRoot.Velocity = vel
-            vehicleRoot.AssemblyLinearVelocity = vel
-            if vel.Magnitude < 0.1 then
-                vehicleRoot.Velocity = Vector3.zero
-                vehicleRoot.AssemblyLinearVelocity = Vector3.zero
+            if vel.Magnitude > 0.1 then
+                vehicleRoot.CFrame = vehicleRoot.CFrame + vel * 0.03
             end
+            vehicleRoot.Velocity = Vector3.zero
+            vehicleRoot.AssemblyLinearVelocity = Vector3.zero
         else
             -- Fly normal no personagem
             if bodyVelocity then

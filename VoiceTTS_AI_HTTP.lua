@@ -1029,8 +1029,22 @@ local function startFly()
         local root = player.Character:FindFirstChild("HumanoidRootPart")
         local humanoid = player.Character:FindFirstChild("Humanoid")
         if not root or not humanoid then return end
-        -- Se sentado, nao precisa de BodyVelocity (move o veiculo direto)
-        if humanoid.Sit then return end
+        if humanoid.Sit then
+            -- Fly sentado: coloca BodyVelocity no assento
+            local seat = humanoid.SeatPart
+            if seat then
+                seat.Anchored = false
+                bodyVelocity = Instance.new("BodyVelocity")
+                bodyVelocity.Velocity = Vector3.zero
+                bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                bodyVelocity.Parent = seat
+                bodyGyro = Instance.new("BodyGyro")
+                bodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                bodyGyro.CFrame = seat.CFrame
+                bodyGyro.Parent = seat
+            end
+            return
+        end
         humanoid.PlatformStand = true
         bodyVelocity = Instance.new("BodyVelocity")
         bodyVelocity.Velocity = Vector3.zero
@@ -1059,8 +1073,7 @@ RunService.Heartbeat:Connect(function()
     if not flying or not player.Character then return end
     pcall(function()
         local root = player.Character:FindFirstChild("HumanoidRootPart")
-        local humanoid = player.Character:FindFirstChild("Humanoid")
-        if not root then return end
+        if not root or not bodyVelocity then return end
         local cam = workspace.CurrentCamera
         local moveDir = Vector3.zero
         if UIS:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
@@ -1070,26 +1083,12 @@ RunService.Heartbeat:Connect(function()
         if UIS:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0,1,0) end
         if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir = moveDir - Vector3.new(0,1,0) end
         local vel = moveDir.Magnitude > 0 and moveDir.Unit * flySpeed or Vector3.zero
-        -- Se sentado, move o veiculo via CFrame
-        if humanoid and humanoid.Sit and humanoid.SeatPart then
-            local seat = humanoid.SeatPart
-            local vehicleRoot = seat
-            if seat.Parent and seat.Parent:IsA("Model") and seat.Parent.PrimaryPart then
-                vehicleRoot = seat.Parent.PrimaryPart
-            end
-            if vel.Magnitude > 0.1 then
-                vehicleRoot.CFrame = vehicleRoot.CFrame + vel * 0.03
-            end
-            vehicleRoot.Velocity = Vector3.zero
-            vehicleRoot.AssemblyLinearVelocity = Vector3.zero
-        else
-            -- Fly normal no personagem
-            if bodyVelocity then
-                bodyVelocity.Velocity = vel
-            end
-            if bodyGyro then
-                bodyGyro.CFrame = cam.CFrame
-            end
+        -- Fly funciona igual sentado ou em pe (BodyVelocity ja esta no lugar certo)
+        if bodyVelocity then
+            bodyVelocity.Velocity = vel
+        end
+        if bodyGyro then
+            bodyGyro.CFrame = cam.CFrame
         end
     end)
 end)
@@ -1460,7 +1459,6 @@ end)
 
 -- HTTP Functions
 local function sendTTS(text, ttsId, priority)
-    print("[DEBUG] Enviando TTS:", text, "ID:", ttsId, "Prioridade:", priority)
     task.spawn(function()
         local success, result = pcall(function()
             local response = request({
@@ -1473,9 +1471,7 @@ local function sendTTS(text, ttsId, priority)
             })
             return response
         end)
-        if success then
-            print("[TTS] Sucesso! ID:", ttsId)
-        else
+        if not success then
             warn("[TTS] Erro:", result)
         end
     end)
@@ -1488,21 +1484,21 @@ local function processNewMode()
     task.spawn(function()
         while allChatEnabled and not queueMode do
             if #messageQueueNew > 0 then
-                -- Sempre pega a Ãºltima mensagem e descarta todas as outras
                 local msg = messageQueueNew[#messageQueueNew]
                 messageQueueNew = {}
                 
-                print("[NEW] Lendo mensagem mais recente:", msg.text)
-                sendTTS(msg.text, msg.id, "low")
+                local ok = pcall(function()
+                    request({
+                        Url = SERVER_URL .. "/tts",
+                        Method = "POST",
+                        Headers = {["Content-Type"] = "application/json"},
+                        Body = HttpService:JSONEncode({text = msg.text, priority = "low", speed = ttsSpeed})
+                    })
+                end)
                 
-                local textLength = #msg.text
-                local waitTime = math.max(1, textLength * 0.08)
-                task.wait(waitTime)
-                
-                -- Aguarda 1 segundo antes de procurar prÃ³xima mensagem
-                task.wait(1)
+                if not ok then task.wait(1) end
+                task.wait(0.5)
             else
-                -- Se nÃ£o hÃ¡ mensagens, aguarda atÃ© ter
                 task.wait(0.5)
             end
         end
@@ -1517,15 +1513,18 @@ local function processQueue()
     task.spawn(function()
         while #messageQueue > 0 and allChatEnabled and queueMode do
             local msg = table.remove(messageQueue, 1)
-            sendTTS(msg.text, msg.id, "low")
             
-            local textLength = #msg.text
-            local waitTime = math.max(1, textLength * 0.08)
-            print("[FILA] Aguardando", waitTime, "segundos")
-            task.wait(waitTime)
+            local ok = pcall(function()
+                request({
+                    Url = SERVER_URL .. "/tts",
+                    Method = "POST",
+                    Headers = {["Content-Type"] = "application/json"},
+                    Body = HttpService:JSONEncode({text = msg.text, priority = "low", speed = ttsSpeed})
+                })
+            end)
             
-            -- Aguarda 1 segundo entre mensagens
-            task.wait(1)
+            if not ok then task.wait(1) end
+            task.wait(0.5)
         end
         isProcessingQueue = false
     end)

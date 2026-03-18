@@ -71,6 +71,18 @@ Title.Position = UDim2.new(0, 12, 0, 0)
 Title.Active = true
 Title.ZIndex = 2
 
+-- Credito
+local creditLabel = Instance.new("TextLabel")
+creditLabel.Parent = MainFrame
+creditLabel.BackgroundTransparency = 1
+creditLabel.Position = UDim2.new(0, 0, 1, -20)
+creditLabel.Size = UDim2.new(1, 0, 0, 20)
+creditLabel.Font = Enum.Font.GothamBold
+creditLabel.Text = "By @leo.zppln"
+creditLabel.TextColor3 = Color3.fromRGB(120, 100, 180)
+creditLabel.TextSize = 13
+creditLabel.TextTransparency = 0.3
+
 -- Linha separadora do header
 local headerLine = Instance.new("Frame")
 headerLine.Parent = MainFrame
@@ -880,10 +892,10 @@ Instance.new("UICorner", clickTpIndicator).CornerRadius = UDim.new(1, 0)
 
 -- Player List estilizado
 local PlayerListFrame = Instance.new("Frame")
-PlayerListFrame.Parent = Content3
-PlayerListFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
-PlayerListFrame.Position = UDim2.new(0, 10, 0, 280)
-PlayerListFrame.Size = UDim2.new(0, 200, 0, 60)
+PlayerListFrame.Parent = ScreenGui
+PlayerListFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 32)
+PlayerListFrame.Position = UDim2.new(0, 0, 0, 0)
+PlayerListFrame.Size = UDim2.new(0, 200, 0, 300)
 PlayerListFrame.Visible = false
 PlayerListFrame.BorderSizePixel = 0
 Instance.new("UICorner", PlayerListFrame).CornerRadius = UDim.new(0, 10)
@@ -1216,7 +1228,13 @@ end)
 
 tpBtn.MouseButton1Click:Connect(function()
     PlayerListFrame.Visible = not PlayerListFrame.Visible
-    if PlayerListFrame.Visible then updatePlayerList() end
+    if PlayerListFrame.Visible then
+        -- Posiciona ao lado direito do MainFrame
+        local pos = MainFrame.AbsolutePosition
+        local size = MainFrame.AbsoluteSize
+        PlayerListFrame.Position = UDim2.new(0, pos.X + size.X + 5, 0, pos.Y)
+        updatePlayerList()
+    end
 end)
 
 clickTpBtn.MouseButton1Click:Connect(function()

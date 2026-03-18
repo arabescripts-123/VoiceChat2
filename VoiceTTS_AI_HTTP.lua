@@ -1018,6 +1018,8 @@ local function startFly()
         local root = player.Character:FindFirstChild("HumanoidRootPart")
         local humanoid = player.Character:FindFirstChild("Humanoid")
         if not root or not humanoid then return end
+        -- Se sentado, nao precisa de BodyVelocity (move o veiculo direto)
+        if humanoid.Sit then return end
         humanoid.PlatformStand = true
         bodyVelocity = Instance.new("BodyVelocity")
         bodyVelocity.Velocity = Vector3.zero
@@ -1047,13 +1049,7 @@ RunService.Heartbeat:Connect(function()
     pcall(function()
         local root = player.Character:FindFirstChild("HumanoidRootPart")
         local humanoid = player.Character:FindFirstChild("Humanoid")
-        if not root or not bodyVelocity then return end
-        -- Desativa fly se sentou em algo
-        if humanoid and humanoid.Sit then
-            stopFly()
-            flyIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-            return
-        end
+        if not root then return end
         local cam = workspace.CurrentCamera
         local moveDir = Vector3.zero
         if UIS:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
@@ -1062,8 +1058,31 @@ RunService.Heartbeat:Connect(function()
         if UIS:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
         if UIS:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0,1,0) end
         if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir = moveDir - Vector3.new(0,1,0) end
-        bodyVelocity.Velocity = moveDir.Magnitude > 0 and moveDir.Unit * flySpeed or Vector3.zero
-        bodyGyro.CFrame = cam.CFrame
+        local vel = moveDir.Magnitude > 0 and moveDir.Unit * flySpeed or Vector3.zero
+        -- Se sentado, move o veiculo
+        if humanoid and humanoid.Sit and humanoid.SeatPart then
+            local seat = humanoid.SeatPart
+            local vehicleRoot = seat
+            -- Tenta achar a raiz do modelo do veiculo
+            if seat.Parent and seat.Parent:IsA("Model") and seat.Parent.PrimaryPart then
+                vehicleRoot = seat.Parent.PrimaryPart
+            end
+            -- Aplica velocidade no veiculo
+            vehicleRoot.Velocity = vel
+            vehicleRoot.AssemblyLinearVelocity = vel
+            if vel.Magnitude < 0.1 then
+                vehicleRoot.Velocity = Vector3.zero
+                vehicleRoot.AssemblyLinearVelocity = Vector3.zero
+            end
+        else
+            -- Fly normal no personagem
+            if bodyVelocity then
+                bodyVelocity.Velocity = vel
+            end
+            if bodyGyro then
+                bodyGyro.CFrame = cam.CFrame
+            end
+        end
     end)
 end)
 

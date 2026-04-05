@@ -400,13 +400,14 @@ local savedCollisions = {}
 
 RunService.Stepped:Connect(function()
     pcall(function()
+        if flingEnabled then return end
         if noclipEnabled and player.Character then
             for _, part in ipairs(player.Character:GetDescendants()) do
                 if part:IsA("BasePart") then part.CanCollide = false end
             end
             return
         end
-        if flying or flingEnabled then
+        if flying then
             for part in pairs(savedCollisions) do
                 if part and part.Parent then part.CanCollide = true end
             end
@@ -1146,31 +1147,41 @@ mouse.Button1Down:Connect(function()
     end)
 end)
 
--- Fling limpo: voce anda normal, encosta no player, ele voa
+-- Fling real: rotacao absurda + colisao fisica
+local flingBV = nil
+local flingAV = nil
+
+local function startFling()
+    local char = player.Character
+    if not char then return end
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    -- Garante colisao ativa
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then part.CanCollide = true end
+    end
+    flingBV = Instance.new("BodyVelocity")
+    flingBV.Velocity = Vector3.new(0, 0, 0)
+    flingBV.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+    flingBV.Parent = root
+    flingAV = Instance.new("BodyAngularVelocity")
+    flingAV.AngularVelocity = Vector3.new(0, 99999, 0)
+    flingAV.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+    flingAV.Parent = root
+end
+
+local function stopFling()
+    if flingBV then flingBV:Destroy() flingBV = nil end
+    if flingAV then flingAV:Destroy() flingAV = nil end
+end
+
 flingBtn.MouseButton1Click:Connect(function()
     flingEnabled = not flingEnabled
     flingIndicator.BackgroundColor3 = flingEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
     if flingEnabled then
-        flingConnection = RunService.Heartbeat:Connect(function()
-            if not flingEnabled or not player.Character then return end
-            local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
-            if not myRoot then return end
-            if tick() - lastFling < FLING_COOLDOWN then return end
-            for _, plr in pairs(game.Players:GetPlayers()) do
-                if plr ~= player and plr.Character then
-                    local otherRoot = plr.Character:FindFirstChild("HumanoidRootPart")
-                    if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 6 then
-                        lastFling = tick()
-                        local dir = (otherRoot.Position - myRoot.Position).Unit
-                        pcall(function()
-                            otherRoot.AssemblyLinearVelocity = dir * FLING_FORCE + Vector3.new(0, 80, 0)
-                        end)
-                    end
-                end
-            end
-        end)
+        startFling()
     else
-        if flingConnection then flingConnection:Disconnect() flingConnection = nil end
+        stopFling()
     end
 end)
 

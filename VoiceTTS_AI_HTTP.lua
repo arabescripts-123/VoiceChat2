@@ -400,22 +400,15 @@ local savedCollisions = {}
 
 RunService.Stepped:Connect(function()
     pcall(function()
-        -- Noclip manual tem prioridade
         if noclipEnabled and player.Character then
             for _, part in ipairs(player.Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
+                if part:IsA("BasePart") then part.CanCollide = false end
             end
             return
         end
-        
-        -- Desativa anti-colisao quando fly esta ligado
-        if flying then
+        if flying or flingEnabled then
             for part in pairs(savedCollisions) do
-                if part and part.Parent then
-                    part.CanCollide = true
-                end
+                if part and part.Parent then part.CanCollide = true end
             end
             savedCollisions = {}
             return
@@ -1153,40 +1146,57 @@ mouse.Button1Down:Connect(function()
     end)
 end)
 
--- Fling logic
-local function doFling(targetChar)
-    local myRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    local targetRoot = targetChar:FindFirstChild("HumanoidRootPart")
-    if not myRoot or not targetRoot then return end
-    local dir = (targetRoot.Position - myRoot.Position).Unit
-    local bv = Instance.new("BodyVelocity")
-    bv.Velocity = dir * FLING_FORCE + Vector3.new(0, 50, 0)
-    bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
-    bv.Parent = targetRoot
-    game:GetService("Debris"):AddItem(bv, 0.2)
+-- Fling: rotacao absurda + colisao = fisica explode o outro player
+local flingBav = nil
+
+local function startFlingSpin()
+    local char = player.Character
+    if not char then return end
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then part.CanCollide = true end
+    end
+    local bav = Instance.new("BodyAngularVelocity")
+    bav.AngularVelocity = Vector3.new(0, 9999, 0)
+    bav.MaxTorque = Vector3.new(0, math.huge, 0)
+    bav.P = math.huge
+    bav.Parent = root
+    return bav
 end
 
 flingBtn.MouseButton1Click:Connect(function()
     flingEnabled = not flingEnabled
     flingIndicator.BackgroundColor3 = flingEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
     if flingEnabled then
+        flingBav = startFlingSpin()
         flingConnection = RunService.Heartbeat:Connect(function()
             if not flingEnabled or not player.Character then return end
-            if tick() - lastFling < FLING_COOLDOWN then return end
             local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
             if not myRoot then return end
+            if tick() - lastFling < FLING_COOLDOWN then return end
             for _, plr in pairs(game.Players:GetPlayers()) do
                 if plr ~= player and plr.Character then
                     local otherRoot = plr.Character:FindFirstChild("HumanoidRootPart")
-                    if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 5 then
+                    if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 8 then
                         lastFling = tick()
-                        doFling(plr.Character)
+                        local dir = (otherRoot.Position - myRoot.Position).Unit
+                        pcall(function()
+                            otherRoot.AssemblyLinearVelocity = dir * FLING_FORCE + Vector3.new(0, 100, 0)
+                        end)
+                        local bv2 = Instance.new("BodyVelocity")
+                        bv2.Velocity = dir * FLING_FORCE + Vector3.new(0, 100, 0)
+                        bv2.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                        bv2.P = math.huge
+                        bv2.Parent = otherRoot
+                        game:GetService("Debris"):AddItem(bv2, 0.1)
                     end
                 end
             end
         end)
     else
         if flingConnection then flingConnection:Disconnect() flingConnection = nil end
+        if flingBav and flingBav.Parent then flingBav:Destroy() flingBav = nil end
     end
 end)
 

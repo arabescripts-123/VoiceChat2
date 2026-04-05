@@ -381,16 +381,14 @@ local MaxVel = 120
 local MaxVert = 80
 
 RunService.Heartbeat:Connect(function()
+    if flingEnabled then return end
     pcall(function()
         local char = player.Character
         if not char then return end
         local root = char:FindFirstChild("HumanoidRootPart")
         if not root then return end
-        
         local v = root.Velocity
-        if v.Magnitude > MaxVel then
-            v = v.Unit * MaxVel
-        end
+        if v.Magnitude > MaxVel then v = v.Unit * MaxVel end
         v = Vector3.new(v.X, math.clamp(v.Y, -MaxVert, MaxVert), v.Z)
         root.Velocity = v
         root.AssemblyLinearVelocity = v
@@ -527,7 +525,7 @@ local FLING_FORCE = 250
 local FLING_COOLDOWN = 0.8
 local lastFling = 0
 local flingConnection = nil
-local flingBtn, flingIndicator = createStyledToggle("ðŸ’¥", "Fling", Content3, 42)
+local flingBtn, flingIndicator = createStyledToggle("!!", "Fling", Content3, 42)
 
 local speedBtn, speedIndicator = createStyledToggle("", "Speed", Content3, 79)
 local speedBox = createStyledValueBox(Content3, 79, "65")
@@ -1214,5 +1212,17 @@ for _, plr in pairs(game.Players:GetPlayers()) do
 end
 game.Players.PlayerAdded:Connect(setupPlayerChat)
 
+
+rejoinBtn.MouseButton1Click:Connect(function()
+    pcall(function()
+        local TeleportService = game:GetService("TeleportService")
+        local jobId = game.JobId
+        if jobId and jobId ~= "" then
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId, player)
+        else
+            TeleportService:Teleport(game.PlaceId, player)
+        end
+    end)
+end)
 
 print("[VoiceTTS] Carregado! Z=Menu | F=Fly | Server:", SERVER_URL)

@@ -1150,30 +1150,42 @@ end)
 -- Fling real: rotacao absurda + colisao fisica
 local flingBV = nil
 local flingAV = nil
+local flingPart = nil
+local flingConnection = nil
 
 local function startFling()
     local char = player.Character
     if not char then return end
     local root = char:FindFirstChild("HumanoidRootPart")
     if not root then return end
-    noclipEnabled = false
-    savedCollisions = {}
-    for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") then part.CanCollide = true end
-    end
-    flingBV = Instance.new("BodyVelocity")
-    flingBV.MaxForce = Vector3.new(1e9, 1e9, 1e9)
-    flingBV.Velocity = root.CFrame.LookVector * 120
-    flingBV.Parent = root
-    flingAV = Instance.new("BodyAngularVelocity")
-    flingAV.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
-    flingAV.AngularVelocity = Vector3.new(99999, 99999, 99999)
-    flingAV.Parent = root
+
+    flingPart = Instance.new("Part")
+    flingPart.Size = Vector3.new(6, 6, 6)
+    flingPart.Transparency = 1
+    flingPart.CanCollide = true
+    flingPart.Anchored = false
+    flingPart.Parent = workspace
+
+    local bv = Instance.new("BodyVelocity")
+    bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bv.Velocity = Vector3.new(0, 0, 0)
+    bv.Parent = flingPart
+
+    local av = Instance.new("BodyAngularVelocity")
+    av.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    av.AngularVelocity = Vector3.new(99999, 99999, 99999)
+    av.Parent = flingPart
+
+    flingConnection = RunService.Heartbeat:Connect(function()
+        if not flingPart or not root or not root.Parent then return end
+        flingPart.CFrame = root.CFrame
+        bv.Velocity = root.CFrame.LookVector * 120
+    end)
 end
 
 local function stopFling()
-    if flingBV then flingBV:Destroy() flingBV = nil end
-    if flingAV then flingAV:Destroy() flingAV = nil end
+    if flingConnection then flingConnection:Disconnect() flingConnection = nil end
+    if flingPart then flingPart:Destroy() flingPart = nil end
 end
 
 flingBtn.MouseButton1Click:Connect(function()
@@ -1183,14 +1195,6 @@ flingBtn.MouseButton1Click:Connect(function()
         startFling()
     else
         stopFling()
-    end
-end)
-
-RunService.Heartbeat:Connect(function()
-    if not flingEnabled or not flingBV or not player.Character then return end
-    local root = player.Character:FindFirstChild("HumanoidRootPart")
-    if root then
-        flingBV.Velocity = root.CFrame.LookVector * 120
     end
 end)
 

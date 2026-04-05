@@ -125,33 +125,17 @@ local function createTab(name, pos)
     return tab
 end
 
-local tab1 = createTab("Chat", 4)
-local tab2 = createTab("Musica", 80)
-local tab3 = createTab("Player", 156)
-local tab4 = createTab("God", 232)
+local tab3 = createTab("Player", 4)
+local tab4 = createTab("God", 80)
 
 -- Content Frames
 local contentY = 72
-local Content1 = Instance.new("Frame")
-Content1.Parent = MainFrame
-Content1.BackgroundTransparency = 1
-Content1.Position = UDim2.new(0, 0, 0, contentY)
-Content1.Size = UDim2.new(1, 0, 1, -contentY)
-Content1.Visible = true
-
-local Content2 = Instance.new("Frame")
-Content2.Parent = MainFrame
-Content2.BackgroundTransparency = 1
-Content2.Position = UDim2.new(0, 0, 0, contentY)
-Content2.Size = UDim2.new(1, 0, 1, -contentY)
-Content2.Visible = false
-
 local Content3 = Instance.new("Frame")
 Content3.Parent = MainFrame
 Content3.BackgroundTransparency = 1
 Content3.Position = UDim2.new(0, 0, 0, contentY)
 Content3.Size = UDim2.new(1, 0, 1, -contentY)
-Content3.Visible = false
+Content3.Visible = true
 
 local Content4 = Instance.new("Frame")
 Content4.Parent = MainFrame
@@ -296,308 +280,7 @@ end
 -- Aplica hover no rejoin agora que addHover existe
 addHover(rejoinBtn, Color3.fromRGB(160, 40, 40), Color3.fromRGB(200, 55, 55))
 
--- Input Box estilizado
-local inputContainer = Instance.new("Frame")
-inputContainer.Parent = Content1
-inputContainer.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-inputContainer.Position = UDim2.new(0, 10, 0, 5)
-inputContainer.Size = UDim2.new(0, 200, 0, 34)
-inputContainer.BorderSizePixel = 0
-Instance.new("UICorner", inputContainer).CornerRadius = UDim.new(0, 10)
-local inputStroke = Instance.new("UIStroke")
-inputStroke.Parent = inputContainer
-inputStroke.Color = Color3.fromRGB(90, 60, 220)
-inputStroke.Thickness = 1.5
-inputStroke.Transparency = 0.3
-
-local voiceInputBox = Instance.new("TextBox")
-voiceInputBox.Parent = inputContainer
-voiceInputBox.BackgroundTransparency = 1
-voiceInputBox.Position = UDim2.new(0, 10, 0, 0)
-voiceInputBox.Size = UDim2.new(1, -15, 1, 0)
-voiceInputBox.Font = Enum.Font.GothamMedium
-voiceInputBox.PlaceholderText = "Digite para falar..."
-voiceInputBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
-voiceInputBox.Text = ""
-voiceInputBox.TextColor3 = Color3.fromRGB(230, 230, 255)
-voiceInputBox.TextSize = 12
-voiceInputBox.ClearTextOnFocus = false
-
-voiceInputBox.Focused:Connect(function()
-	TweenService:Create(inputStroke, tweenInfo, {Color = Color3.fromRGB(130, 90, 255), Transparency = 0}):Play()
-end)
-voiceInputBox.FocusLost:Connect(function()
-	TweenService:Create(inputStroke, tweenInfo, {Color = Color3.fromRGB(90, 60, 220), Transparency = 0.3}):Play()
-end)
-
--- BotÃ£o Falar estilizado
-local voiceSendBtn = Instance.new("TextButton")
-voiceSendBtn.Parent = Content1
-voiceSendBtn.BackgroundColor3 = Color3.fromRGB(100, 60, 220)
-voiceSendBtn.Position = UDim2.new(0, 10, 0, 44)
-voiceSendBtn.Size = UDim2.new(0, 200, 0, 32)
-voiceSendBtn.Font = Enum.Font.GothamBold
-voiceSendBtn.Text = "Falar"
-voiceSendBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-voiceSendBtn.TextSize = 13
-voiceSendBtn.BorderSizePixel = 0
-Instance.new("UICorner", voiceSendBtn).CornerRadius = UDim.new(0, 10)
-addHover(voiceSendBtn, Color3.fromRGB(100, 60, 220), Color3.fromRGB(130, 85, 255))
-
--- Separador
-local sep1 = Instance.new("Frame")
-sep1.Parent = Content1
-sep1.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-sep1.Position = UDim2.new(0, 20, 0, 82)
-sep1.Size = UDim2.new(0, 180, 0, 1)
-sep1.BorderSizePixel = 0
-
--- All Chat TTS estilizado
-local allChatBtn = Instance.new("TextButton")
-allChatBtn.Parent = Content1
-allChatBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
-allChatBtn.Position = UDim2.new(0, 10, 0, 90)
-allChatBtn.Size = UDim2.new(0, 200, 0, 35)
-allChatBtn.Font = Enum.Font.GothamBold
-allChatBtn.Text = "  All Chat TTS"
-allChatBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
-allChatBtn.TextSize = 13
-allChatBtn.TextXAlignment = Enum.TextXAlignment.Left
-allChatBtn.BorderSizePixel = 0
-Instance.new("UICorner", allChatBtn).CornerRadius = UDim.new(0, 10)
-addHover(allChatBtn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
-
-local allChatIndicator = Instance.new("Frame")
-allChatIndicator.Parent = allChatBtn
-allChatIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-allChatIndicator.Position = UDim2.new(1, -28, 0.5, -8)
-allChatIndicator.Size = UDim2.new(0, 16, 0, 16)
-allChatIndicator.BorderSizePixel = 0
-Instance.new("UICorner", allChatIndicator).CornerRadius = UDim.new(1, 0)
-
--- Background Fila/New com gradiente
-local modeBackground = Instance.new("Frame")
-modeBackground.Parent = Content1
-modeBackground.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
-modeBackground.Position = UDim2.new(0, 10, 0, 130)
-modeBackground.Size = UDim2.new(0, 200, 0, 42)
-modeBackground.BorderSizePixel = 0
-Instance.new("UICorner", modeBackground).CornerRadius = UDim.new(0, 10)
-local modeStroke = Instance.new("UIStroke")
-modeStroke.Parent = modeBackground
-modeStroke.Color = Color3.fromRGB(60, 60, 80)
-modeStroke.Thickness = 1
-
-local function createStyledModeButton(name, parent, xPos, yPos)
-	local btn = Instance.new("TextButton")
-	btn.Parent = parent
-	btn.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-	btn.Position = UDim2.new(0, xPos, 0, yPos)
-	btn.Size = UDim2.new(0, 92, 0, 30)
-	btn.Font = Enum.Font.GothamBold
-	btn.Text = name
-	btn.TextColor3 = Color3.fromRGB(200, 200, 220)
-	btn.TextSize = 12
-	btn.BorderSizePixel = 0
-	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
-	addHover(btn, Color3.fromRGB(50, 50, 70), Color3.fromRGB(70, 65, 100))
-
-	local indicator = Instance.new("Frame")
-	indicator.Parent = btn
-	indicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-	indicator.Position = UDim2.new(1, -20, 0.5, -6)
-	indicator.Size = UDim2.new(0, 12, 0, 12)
-	indicator.BorderSizePixel = 0
-	Instance.new("UICorner", indicator).CornerRadius = UDim.new(1, 0)
-
-	return btn, indicator
-end
-
-local filaBtn, filaIndicator = createStyledModeButton("Fila", Content1, 14, 136)
-local newBtn, newIndicator = createStyledModeButton("New", Content1, 114, 136)
-
--- Separador 2
-local sep2 = Instance.new("Frame")
-sep2.Parent = Content1
-sep2.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-sep2.Position = UDim2.new(0, 20, 0, 180)
-sep2.Size = UDim2.new(0, 180, 0, 1)
-sep2.BorderSizePixel = 0
-
--- Speed Label estilizado
-local speedLabel = Instance.new("TextLabel")
-speedLabel.Parent = Content1
-speedLabel.BackgroundTransparency = 1
-speedLabel.Position = UDim2.new(0, 12, 0, 188)
-speedLabel.Size = UDim2.new(0, 200, 0, 15)
-speedLabel.Font = Enum.Font.GothamMedium
-speedLabel.Text = "Velocidade: 1.0x"
-speedLabel.TextColor3 = Color3.fromRGB(180, 180, 210)
-speedLabel.TextSize = 11
-speedLabel.TextXAlignment = Enum.TextXAlignment.Left
-
--- Speed Track estilizado
-local speedTrack = Instance.new("Frame")
-speedTrack.Parent = Content1
-speedTrack.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
-speedTrack.Position = UDim2.new(0, 12, 0, 208)
-speedTrack.Size = UDim2.new(0, 196, 0, 6)
-speedTrack.BorderSizePixel = 0
-Instance.new("UICorner", speedTrack).CornerRadius = UDim.new(1, 0)
-
--- Preenchimento colorido do track
-local speedFill = Instance.new("Frame")
-speedFill.Parent = speedTrack
-speedFill.BackgroundColor3 = Color3.fromRGB(100, 60, 220)
-speedFill.Size = UDim2.new(0, 0, 1, 0)
-speedFill.BorderSizePixel = 0
-Instance.new("UICorner", speedFill).CornerRadius = UDim.new(1, 0)
-
--- Handle com glow
-local speedHandle = Instance.new("Frame")
-speedHandle.Parent = speedTrack
-speedHandle.BackgroundColor3 = Color3.fromRGB(150, 120, 255)
-speedHandle.Position = UDim2.new(0, 0, 0.5, -8)
-speedHandle.Size = UDim2.new(0, 16, 0, 16)
-speedHandle.BorderSizePixel = 0
-Instance.new("UICorner", speedHandle).CornerRadius = UDim.new(1, 0)
-local handleGlow = Instance.new("UIStroke")
-handleGlow.Parent = speedHandle
-handleGlow.Color = Color3.fromRGB(130, 90, 255)
-handleGlow.Thickness = 2
-handleGlow.Transparency = 0.4
-
--- ABA 2: MÃšSICA (Visual Moderno)
-
--- BotÃ£o toggle YouTube estilizado
-local musicBtn = Instance.new("TextButton")
-musicBtn.Parent = Content2
-musicBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
-musicBtn.Position = UDim2.new(0, 10, 0, 5)
-musicBtn.Size = UDim2.new(0, 200, 0, 35)
-musicBtn.Font = Enum.Font.GothamBold
-musicBtn.Text = "  Musica YouTube"
-musicBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
-musicBtn.TextSize = 13
-musicBtn.TextXAlignment = Enum.TextXAlignment.Left
-musicBtn.BorderSizePixel = 0
-Instance.new("UICorner", musicBtn).CornerRadius = UDim.new(0, 10)
-addHover(musicBtn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
-
-local musicIndicator = Instance.new("Frame")
-musicIndicator.Parent = musicBtn
-musicIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-musicIndicator.Position = UDim2.new(1, -28, 0.5, -8)
-musicIndicator.Size = UDim2.new(0, 16, 0, 16)
-musicIndicator.BorderSizePixel = 0
-Instance.new("UICorner", musicIndicator).CornerRadius = UDim.new(1, 0)
-
--- Background container para busca + tocar
-local musicBackground = Instance.new("Frame")
-musicBackground.Parent = Content2
-musicBackground.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
-musicBackground.Position = UDim2.new(0, 10, 0, 45)
-musicBackground.Size = UDim2.new(0, 200, 0, 90)
-musicBackground.BorderSizePixel = 0
-Instance.new("UICorner", musicBackground).CornerRadius = UDim.new(0, 10)
-local musicBgStroke = Instance.new("UIStroke")
-musicBgStroke.Parent = musicBackground
-musicBgStroke.Color = Color3.fromRGB(60, 60, 80)
-musicBgStroke.Thickness = 1
-
--- Input de busca estilizado
-local musicInputContainer = Instance.new("Frame")
-musicInputContainer.Parent = Content2
-musicInputContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 42)
-musicInputContainer.Position = UDim2.new(0, 18, 0, 52)
-musicInputContainer.Size = UDim2.new(0, 184, 0, 30)
-musicInputContainer.BorderSizePixel = 0
-Instance.new("UICorner", musicInputContainer).CornerRadius = UDim.new(0, 8)
-local musicInputStroke = Instance.new("UIStroke")
-musicInputStroke.Parent = musicInputContainer
-musicInputStroke.Color = Color3.fromRGB(30, 180, 80)
-musicInputStroke.Thickness = 1.5
-musicInputStroke.Transparency = 0.4
-
-local musicInputBox = Instance.new("TextBox")
-musicInputBox.Parent = musicInputContainer
-musicInputBox.BackgroundTransparency = 1
-musicInputBox.Position = UDim2.new(0, 8, 0, 0)
-musicInputBox.Size = UDim2.new(1, -12, 1, 0)
-musicInputBox.Font = Enum.Font.GothamMedium
-musicInputBox.PlaceholderText = "Nome da musica..."
-musicInputBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 140)
-musicInputBox.Text = ""
-musicInputBox.TextColor3 = Color3.fromRGB(230, 230, 255)
-musicInputBox.TextSize = 12
-musicInputBox.ClearTextOnFocus = false
-
-musicInputBox.Focused:Connect(function()
-	TweenService:Create(musicInputStroke, tweenInfo, {Color = Color3.fromRGB(50, 220, 110), Transparency = 0}):Play()
-end)
-musicInputBox.FocusLost:Connect(function()
-	TweenService:Create(musicInputStroke, tweenInfo, {Color = Color3.fromRGB(30, 180, 80), Transparency = 0.4}):Play()
-end)
-
--- BotÃ£o Tocar estilizado (verde Spotify)
-local musicPlayBtn = Instance.new("TextButton")
-musicPlayBtn.Parent = Content2
-musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
-musicPlayBtn.Position = UDim2.new(0, 18, 0, 90)
-musicPlayBtn.Size = UDim2.new(0, 184, 0, 32)
-musicPlayBtn.Font = Enum.Font.GothamBold
-musicPlayBtn.Text = "Tocar"
-musicPlayBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-musicPlayBtn.TextSize = 13
-musicPlayBtn.BorderSizePixel = 0
-Instance.new("UICorner", musicPlayBtn).CornerRadius = UDim.new(0, 10)
--- Sistema de hover dinâmico para musicPlayBtn (evita acumular conexões)
-local musicPlayNormalColor = Color3.fromRGB(30, 185, 84)
-local musicPlayHoverColor = Color3.fromRGB(45, 220, 110)
-
-musicPlayBtn.MouseEnter:Connect(function()
-	TweenService:Create(musicPlayBtn, tweenInfo, {BackgroundColor3 = musicPlayHoverColor}):Play()
-end)
-musicPlayBtn.MouseLeave:Connect(function()
-	TweenService:Create(musicPlayBtn, tweenInfo, {BackgroundColor3 = musicPlayNormalColor}):Play()
-end)
-
-local function setMusicPlayStyle(normal, hover)
-	musicPlayNormalColor = normal
-	musicPlayHoverColor = hover
-	musicPlayBtn.BackgroundColor3 = normal
-end
-
--- Separador
-local sepMusic = Instance.new("Frame")
-sepMusic.Parent = Content2
-sepMusic.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-sepMusic.Position = UDim2.new(0, 20, 0, 142)
-sepMusic.Size = UDim2.new(0, 180, 0, 1)
-sepMusic.BorderSizePixel = 0
-
--- BotÃ£o Players /play estilizado
-local playerPermissionBtn = Instance.new("TextButton")
-playerPermissionBtn.Parent = Content2
-playerPermissionBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
-playerPermissionBtn.Position = UDim2.new(0, 10, 0, 150)
-playerPermissionBtn.Size = UDim2.new(0, 200, 0, 35)
-playerPermissionBtn.Font = Enum.Font.GothamBold
-playerPermissionBtn.Text = "  Players /play"
-playerPermissionBtn.TextColor3 = Color3.fromRGB(220, 220, 240)
-playerPermissionBtn.TextSize = 13
-playerPermissionBtn.TextXAlignment = Enum.TextXAlignment.Left
-playerPermissionBtn.BorderSizePixel = 0
-Instance.new("UICorner", playerPermissionBtn).CornerRadius = UDim.new(0, 10)
-addHover(playerPermissionBtn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
-
-local playerPermissionIndicator = Instance.new("Frame")
-playerPermissionIndicator.Parent = playerPermissionBtn
-playerPermissionIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-playerPermissionIndicator.Position = UDim2.new(1, -28, 0.5, -8)
-playerPermissionIndicator.Size = UDim2.new(0, 16, 0, 16)
-playerPermissionIndicator.BorderSizePixel = 0
-Instance.new("UICorner", playerPermissionIndicator).CornerRadius = UDim.new(1, 0)
+-- ABA 2: MÚSICA removida - agora no app Python
 
 -- ABA 3: PLAYER
 local RunService = game:GetService("RunService")
@@ -1375,9 +1058,8 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
--- Tab System Logic com animaÃ§Ã£o
-local tabs = {tab1, tab2, tab3, tab4}
-local contents = {Content1, Content2, Content3, Content4}
+local tabs = {tab3, tab4}
+local contents = {Content3, Content4}
 
 local function switchTab(index)
 	for i, t in ipairs(tabs) do
@@ -1390,517 +1072,9 @@ local function switchTab(index)
 	end
 end
 
-tab1.MouseButton1Click:Connect(function() switchTab(1) end)
-tab2.MouseButton1Click:Connect(function() switchTab(2) end)
-tab3.MouseButton1Click:Connect(function() switchTab(3) end)
-tab4.MouseButton1Click:Connect(function() switchTab(4) end)
+tab3.MouseButton1Click:Connect(function() switchTab(1) end)
+tab4.MouseButton1Click:Connect(function() switchTab(2) end)
 switchTab(1)
-
--- Variables
-local allChatEnabled = false
-local PROXIMITY_DISTANCE = 50
-local ttsSpeed = 1.0
-local musicEnabled = false
-local musicPlaying = false
-local musicSearching = false
-local musicToggling = false
-local playerCanPlay = false
-
--- Queue System
-local queueMode = true
-local messageQueue = {}
-local messageQueueNew = {}
-local isProcessingQueue = false
-local currentTTSId = 0
-local isPlayingNew = false
-
--- Speed Slider Logic
-local speedDragging = false
-
-speedHandle.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        speedDragging = true
-    end
-end)
-
-UIS.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        speedDragging = false
-        healDragging = false
-        hpDragging = false
-    end
-end)
-
-UIS.InputChanged:Connect(function(input)
-    if speedDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local mousePos = UIS:GetMouseLocation()
-        local trackPos = speedTrack.AbsolutePosition.X
-        local trackSize = speedTrack.AbsoluteSize.X
-        local relativePos = math.clamp(mousePos.X - trackPos, 0, trackSize)
-        local percentage = relativePos / trackSize
-        
-        ttsSpeed = 1.0 + (percentage * 1.5)
-        speedHandle.Position = UDim2.new(percentage, 0, 0.5, -8)
-        speedFill.Size = UDim2.new(percentage, 0, 1, 0)
-        speedLabel.Text = string.format("Velocidade: %.1fx", ttsSpeed)
-        
-        task.spawn(function()
-            pcall(function()
-                request({
-                    Url = SERVER_URL .. "/speed",
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode({speed = ttsSpeed})
-                })
-            end)
-        end)
-    end
-end)
-
--- HTTP Functions
-local function sendTTS(text, ttsId, priority)
-    task.spawn(function()
-        local success, result = pcall(function()
-            local response = request({
-                Url = SERVER_URL .. "/tts",
-                Method = "POST",
-                Headers = {
-                    ["Content-Type"] = "application/json"
-                },
-                Body = HttpService:JSONEncode({text = text, priority = priority, speed = ttsSpeed})
-            })
-            return response
-        end)
-        if not success then
-            warn("[TTS] Erro:", result)
-        end
-    end)
-end
-
-local function processNewMode()
-    if isPlayingNew then return end
-    isPlayingNew = true
-    
-    task.spawn(function()
-        while allChatEnabled and not queueMode do
-            if #messageQueueNew > 0 then
-                local msg = messageQueueNew[#messageQueueNew]
-                messageQueueNew = {}
-                
-                local ok = pcall(function()
-                    request({
-                        Url = SERVER_URL .. "/tts",
-                        Method = "POST",
-                        Headers = {["Content-Type"] = "application/json"},
-                        Body = HttpService:JSONEncode({text = msg.text, priority = "low", speed = ttsSpeed})
-                    })
-                end)
-                
-                if not ok then task.wait(1) end
-                task.wait(0.5)
-            else
-                task.wait(0.5)
-            end
-        end
-        isPlayingNew = false
-    end)
-end
-
-local function processQueue()
-    if isProcessingQueue then return end
-    isProcessingQueue = true
-    
-    task.spawn(function()
-        while #messageQueue > 0 and allChatEnabled and queueMode do
-            local msg = table.remove(messageQueue, 1)
-            
-            local ok = pcall(function()
-                request({
-                    Url = SERVER_URL .. "/tts",
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode({text = msg.text, priority = "low", speed = ttsSpeed})
-                })
-            end)
-            
-            if not ok then task.wait(1) end
-            task.wait(0.5)
-        end
-        isProcessingQueue = false
-    end)
-end
-
-local function handleTTS(text, priority)
-    currentTTSId = currentTTSId + 1
-    local ttsId = currentTTSId
-    
-    if priority == "high" then
-        print("[VOICE TTS] Prioridade alta - limpando fila antiga")
-        messageQueue = {}
-        messageQueueNew = {}
-        isProcessingQueue = false
-        isPlayingNew = false
-        sendTTS(text, ttsId, "high")
-        
-        task.spawn(function()
-            task.wait(5)
-            if allChatEnabled then
-                if queueMode then
-                    print("[FILA] Iniciando nova fila do zero")
-                    processQueue()
-                else
-                    print("[NEW] Reiniciando modo New")
-                    processNewMode()
-                end
-            end
-        end)
-    elseif queueMode then
-        table.insert(messageQueue, {text = text, id = ttsId})
-        print("[FILA] Adicionado:", text, "| Total:", #messageQueue)
-        processQueue()
-    else
-        -- Modo New: usa fila separada
-        table.insert(messageQueueNew, {text = text, id = ttsId})
-        print("[NEW] Nova mensagem adicionada (total:", #messageQueueNew, ")")
-        if not isPlayingNew then
-            processNewMode()
-        end
-    end
-end
-
-local function isPlayerNearby(plr)
-    pcall(function()
-        if not plr.Character or not plr.Character:FindFirstChild("HumanoidRootPart") then return false end
-        if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then return false end
-        return (plr.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude <= PROXIMITY_DISTANCE
-    end)
-    return false
-end
-
--- Music Functions
-local function stopMusic()
-    task.spawn(function()
-        pcall(function()
-            request({
-                Url = SERVER_URL .. "/music/stop",
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = HttpService:JSONEncode({})
-            })
-        end)
-    end)
-end
-
-local function searchMusic(query, playerName)
-    print("[MUSIC] Buscando:", query)
-    
-    if musicPlaying then
-        print("[MUSIC] Parando mÃºsica anterior...")
-        musicPlaying = false
-        stopMusic()
-        task.wait(1.5)
-    end
-    
-    musicSearching = true
-    musicPlayBtn.Text = "Buscando..."
-    musicPlayBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
-    
-    task.spawn(function()
-        local success, result = pcall(function()
-            return request({
-                Url = SERVER_URL .. "/music/search",
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = HttpService:JSONEncode({query = query, player_name = playerName})
-            })
-        end)
-        
-        if not musicSearching then
-            print("[MUSIC] Busca cancelada")
-            return
-        end
-        
-        if success and result then
-            print("[MUSIC] Resposta recebida:", result.StatusCode)
-            local data = HttpService:JSONDecode(result.Body)
-            if data.found and musicSearching then
-                print("[MUSIC] Encontrada:", data.title)
-                musicPlaying = true
-                musicSearching = false
-                musicPlayBtn.Text = "Interromper"
-                musicPlayBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
-                setMusicPlayStyle(Color3.fromRGB(200, 60, 60), Color3.fromRGB(230, 80, 80))
-            else
-                print("[MUSIC] NÃ£o encontrada")
-                musicPlaying = false
-                musicSearching = false
-                musicPlayBtn.Text = "Tocar"
-                musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
-                setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
-            end
-        else
-            warn("[MUSIC] Erro na requisiÃ§Ã£o:", result)
-            musicPlaying = false
-            musicSearching = false
-            musicPlayBtn.Text = "Tocar"
-            musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
-            setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
-        end
-    end)
-end
-
--- Button Events
-voiceSendBtn.MouseButton1Click:Connect(function()
-    local text = voiceInputBox.Text
-    if text == "" or #text < 1 then
-        print("[Voice TTS] Texto vazio")
-        return
-    end
-    
-    print("[Voice TTS] Enviando:", text)
-    voiceInputBox.Text = ""
-    
-    -- Pausa All Chat TTS
-    messageQueue = {}
-    isProcessingQueue = false
-    isPlayingNew = false
-    
-    task.spawn(function()
-        pcall(function()
-            request({
-                Url = SERVER_URL .. "/stop",
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = HttpService:JSONEncode({action = "stop"})
-            })
-        end)
-        task.wait(0.3)
-        handleTTS(text, "high")
-    end)
-end)
-
-filaBtn.MouseButton1Click:Connect(function()
-    if not queueMode then
-        queueMode = true
-        filaIndicator.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-        newIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        print("[MODO] Fila ativado")
-    end
-end)
-
-newBtn.MouseButton1Click:Connect(function()
-    if queueMode then
-        queueMode = false
-        -- Limpa TODAS as filas imediatamente
-        messageQueue = {}
-        messageQueueNew = {}
-        isProcessingQueue = false
-        isPlayingNew = false
-        filaIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        newIndicator.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-        print("[MODO] New ativado - Fila cancelada e voz parada")
-        
-        -- Para qualquer Ã¡udio que esteja tocando
-        task.spawn(function()
-            pcall(function()
-                request({
-                    Url = SERVER_URL .. "/stop",
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode({action = "stop"})
-                })
-            end)
-        end)
-        
-        -- Aguarda um pouco antes de iniciar modo New
-        task.wait(0.3)
-        
-        -- Inicia modo New
-        if allChatEnabled then
-            processNewMode()
-        end
-    end
-end)
-
-allChatBtn.MouseButton1Click:Connect(function()
-    allChatEnabled = not allChatEnabled
-    allChatIndicator.BackgroundColor3 = allChatEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-    
-    if allChatEnabled then
-        queueMode = true
-        filaIndicator.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-        newIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        print("[All Chat] Ativado - Iniciando fila nova")
-    else
-        -- Limpa filas imediatamente
-        messageQueue = {}
-        messageQueueNew = {}
-        isProcessingQueue = false
-        isPlayingNew = false
-        filaIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        newIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        print("[All Chat] Desativado - Parando voz IMEDIATAMENTE")
-        
-        -- Para o Ã¡udio instantaneamente no servidor
-        task.spawn(function()
-            pcall(function()
-                request({
-                    Url = SERVER_URL .. "/stop",
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode({action = "stop"})
-                })
-            end)
-        end)
-    end
-    
-    print("[All Chat]", allChatEnabled and "Ativado" or "Desativado")
-end)
-
-
-musicBtn.MouseButton1Click:Connect(function()
-    if musicToggling then
-        print("[MUSIC] Aguarde...")
-        return
-    end
-    
-    musicToggling = true
-    
-    -- Muda visual imediatamente para feedback instantÃ¢neo
-    musicEnabled = not musicEnabled
-    musicIndicator.BackgroundColor3 = musicEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-    
-    -- Se desativar, para a mÃºsica imediatamente e desativa Players /play
-    if not musicEnabled then
-        playerCanPlay = false
-        playerPermissionIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        musicPlaying = false
-        musicSearching = false
-        musicPlayBtn.Text = "Tocar"
-        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
-        setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
-        print("[MUSIC] Players /play desativado automaticamente")
-        print("[MUSIC] Parando mÃºsica imediatamente")
-        stopMusic()
-    end
-    
-    print("[MUSIC]", musicEnabled and "ATIVANDO..." or "DESATIVANDO...")
-    
-    -- Envia para servidor em background
-    task.spawn(function()
-        local success, response = pcall(function()
-            return request({
-                Url = SERVER_URL .. "/music/toggle",
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = HttpService:JSONEncode({})
-            })
-        end)
-        
-        if success and response then
-            local data = HttpService:JSONDecode(response.Body)
-            musicEnabled = data.enabled
-            musicIndicator.BackgroundColor3 = musicEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-            print("[MUSIC]", musicEnabled and "ATIVADO!" or "DESATIVADO!")
-        else
-            warn("[MUSIC] Erro ao alternar estado")
-            -- Reverte em caso de erro
-            musicEnabled = not musicEnabled
-            musicIndicator.BackgroundColor3 = musicEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-        end
-        
-        task.wait(0.2)
-        musicToggling = false
-    end)
-end)
-
-playerPermissionBtn.MouseButton1Click:Connect(function()
-    playerCanPlay = not playerCanPlay
-    playerPermissionIndicator.BackgroundColor3 = playerCanPlay and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-    print("[MUSIC] Players podem tocar:", playerCanPlay and "SIM" or "NÃƒO")
-end)
-
-musicPlayBtn.MouseButton1Click:Connect(function()
-    if not musicEnabled then
-        print("[MUSIC] Sistema desativado - Ative o botÃ£o 'MÃºsica YouTube' primeiro (deixe verde)")
-        return
-    end
-    
-    -- Se estÃ¡ buscando, cancela a busca
-    if musicSearching then
-        print("[MUSIC] Cancelando busca")
-        musicSearching = false
-        musicPlaying = false
-        musicPlayBtn.Text = "Tocar"
-        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
-        setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
-        stopMusic()
-        return
-    end
-    
-    if musicPlaying then
-        -- Interromper
-        musicPlaying = false
-        musicPlayBtn.Text = "Tocar"
-        musicPlayBtn.BackgroundColor3 = Color3.fromRGB(30, 185, 84)
-        setMusicPlayStyle(Color3.fromRGB(30, 185, 84), Color3.fromRGB(45, 220, 110))
-        stopMusic()
-        print("[MUSIC] Parado")
-    else
-        -- Tocar
-        local query = musicInputBox.Text
-        if query == "" or #query < 2 then
-            print("[MUSIC] Nome muito curto")
-            return
-        end
-        
-        searchMusic(query, nil)
-    end
-end)
-
-local function setupPlayerChat(plr)
-    if plr == player then return end
-    
-    plr.Chatted:Connect(function(message)
-        print("[DEBUG] Player", plr.DisplayName, "falou:", message)
-        
-        -- Detecta comando "/play" (case insensitive)
-        local lowerMsg = string.lower(message)
-        if musicEnabled and playerCanPlay and string.sub(lowerMsg, 1, 5) == "/play" then
-            local songName = string.sub(message, 7)  -- Pega do caractere 7 em diante (apÃ³s "/play ")
-            if #songName > 0 then
-                print("[MUSIC] Comando detectado de", plr.DisplayName, ":", songName)
-                musicInputBox.Text = plr.DisplayName .. " tocou: " .. songName
-                searchMusic(songName, plr.DisplayName)
-                return
-            end
-        end
-        
-        if allChatEnabled then
-            local textToSpeak = plr.DisplayName .. " falou " .. message
-            print("[DEBUG] Falando:", textToSpeak)
-            handleTTS(textToSpeak, "low")
-        end
-    end)
-end
-
-rejoinBtn.MouseButton1Click:Connect(function()
-    local TeleportService = game:GetService("TeleportService")
-    local success, jobId = pcall(function()
-        return game.JobId
-    end)
-    if success and jobId and jobId ~= "" then
-        TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId, player)
-    else
-        TeleportService:Teleport(game.PlaceId, player)
-    end
-end)
-
-for _, plr in pairs(game.Players:GetPlayers()) do
-    setupPlayerChat(plr)
-end
-
-game.Players.PlayerAdded:Connect(setupPlayerChat)
 
 UIS.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
@@ -1971,6 +1145,74 @@ mouse.Button1Down:Connect(function()
             end
         end
     end)
+end)
+
+-- All Chat TTS: envia automaticamente ao servidor, o app controla se fala ou nao
+local function setupPlayerChat(plr)
+    if plr == player then return end
+    plr.Chatted:Connect(function(message)
+        task.spawn(function()
+            pcall(function()
+                request({
+                    Url = SERVER_URL .. "/allchat/message",
+                    Method = "POST",
+                    Headers = {["Content-Type"] = "application/json"},
+                    Body = HttpService:JSONEncode({text = plr.DisplayName .. " falou " .. message})
+                })
+            end)
+        end)
+    end)
+end
+
+for _, plr in pairs(game.Players:GetPlayers()) do
+    setupPlayerChat(plr)
+end
+game.Players.PlayerAdded:Connect(setupPlayerChat)
+
+-- Fling
+local flingEnabled = false
+local FLING_FORCE = 250
+local FLING_COOLDOWN = 0.8
+local lastFling = 0
+local flingConnection = nil
+
+local flingBtn, flingIndicator = createStyledToggle("💥", "Fling", Content3, 317)
+
+local function doFling(targetChar)
+    local myRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    local targetRoot = targetChar:FindFirstChild("HumanoidRootPart")
+    if not myRoot or not targetRoot then return end
+    local dir = (targetRoot.Position - myRoot.Position).Unit
+    local bv = Instance.new("BodyVelocity")
+    bv.Velocity = dir * FLING_FORCE + Vector3.new(0, 50, 0)
+    bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+    bv.Parent = targetRoot
+    game:GetService("Debris"):AddItem(bv, 0.2)
+end
+
+flingBtn.MouseButton1Click:Connect(function()
+    flingEnabled = not flingEnabled
+    flingIndicator.BackgroundColor3 = flingEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+
+    if flingEnabled then
+        flingConnection = RunService.Heartbeat:Connect(function()
+            if not flingEnabled or not player.Character then return end
+            if tick() - lastFling < FLING_COOLDOWN then return end
+            local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
+            if not myRoot then return end
+            for _, plr in pairs(game.Players:GetPlayers()) do
+                if plr ~= player and plr.Character then
+                    local otherRoot = plr.Character:FindFirstChild("HumanoidRootPart")
+                    if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 5 then
+                        lastFling = tick()
+                        doFling(plr.Character)
+                    end
+                end
+            end
+        end)
+    else
+        if flingConnection then flingConnection:Disconnect() flingConnection = nil end
+    end
 end)
 
 print("[VoiceTTS] Carregado! Z=Menu | F=Fly | Server:", SERVER_URL)

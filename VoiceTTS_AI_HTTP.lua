@@ -280,7 +280,7 @@ end
 -- Aplica hover no rejoin agora que addHover existe
 addHover(rejoinBtn, Color3.fromRGB(160, 40, 40), Color3.fromRGB(200, 55, 55))
 
--- ABA 2: MÚSICA removida - agora no app Python
+-- ABA 2: MÃšSICA removida - agora no app Python
 
 -- ABA 3: PLAYER
 local RunService = game:GetService("RunService")
@@ -376,7 +376,7 @@ local function disableGod()
     if God.HealthCon then God.HealthCon:Disconnect() God.HealthCon = nil end
 end
 
--- Anti-Fling automÃ¡tico (proteÃ§Ã£o contra toque com players)
+-- Anti-Fling automÃƒÂ¡tico (proteÃƒÂ§ÃƒÂ£o contra toque com players)
 local MaxVel = 120
 local MaxVert = 80
 
@@ -521,29 +521,37 @@ end
 local flyBtn, flyIndicator = createStyledToggle("", "Fly", Content3, 5)
 local flySpeedBox = createStyledValueBox(Content3, 5, "65")
 
-local speedBtn, speedIndicator = createStyledToggle("", "Speed", Content3, 42)
-local speedBox = createStyledValueBox(Content3, 42, "65")
+-- Fling logo abaixo do Fly
+local flingEnabled = false
+local FLING_FORCE = 250
+local FLING_COOLDOWN = 0.8
+local lastFling = 0
+local flingConnection = nil
+local flingBtn, flingIndicator = createStyledToggle("ðŸ’¥", "Fling", Content3, 42)
 
-local jumpBtn, jumpIndicator = createStyledToggle("", "SuperJump", Content3, 79)
-local jumpBox = createStyledValueBox(Content3, 79, "100")
+local speedBtn, speedIndicator = createStyledToggle("", "Speed", Content3, 79)
+local speedBox = createStyledValueBox(Content3, 79, "65")
+
+local jumpBtn, jumpIndicator = createStyledToggle("", "SuperJump", Content3, 116)
+local jumpBox = createStyledValueBox(Content3, 116, "100")
 
 -- Separador
 local sepPlayer1 = Instance.new("Frame")
 sepPlayer1.Parent = Content3
 sepPlayer1.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-sepPlayer1.Position = UDim2.new(0, 20, 0, 117)
+sepPlayer1.Position = UDim2.new(0, 20, 0, 154)
 sepPlayer1.Size = UDim2.new(0, 180, 0, 1)
 sepPlayer1.BorderSizePixel = 0
 
-local freezeBtn, freezeIndicator = createStyledToggle("", "Congelar", Content3, 123)
-local noclipBtn, noclipIndicator = createStyledToggle("", "Noclip", Content3, 160)
-local telekinesisBtn, telekinesisIndicator = createStyledToggle("", "Telecinese", Content3, 197)
+local freezeBtn, freezeIndicator = createStyledToggle("", "Congelar", Content3, 160)
+local noclipBtn, noclipIndicator = createStyledToggle("", "Noclip", Content3, 197)
+local telekinesisBtn, telekinesisIndicator = createStyledToggle("", "Telecinese", Content3, 234)
 
 -- Separador 2
 local sepPlayer2 = Instance.new("Frame")
 sepPlayer2.Parent = Content3
 sepPlayer2.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
-sepPlayer2.Position = UDim2.new(0, 20, 0, 236)
+sepPlayer2.Position = UDim2.new(0, 20, 0, 273)
 sepPlayer2.Size = UDim2.new(0, 180, 0, 1)
 sepPlayer2.BorderSizePixel = 0
 
@@ -551,7 +559,7 @@ sepPlayer2.BorderSizePixel = 0
 local tpBtn = Instance.new("TextButton")
 tpBtn.Parent = Content3
 tpBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
-tpBtn.Position = UDim2.new(0, 10, 0, 243)
+tpBtn.Position = UDim2.new(0, 10, 0, 280)
 tpBtn.Size = UDim2.new(0, 160, 0, 32)
 tpBtn.Font = Enum.Font.GothamBold
 tpBtn.Text = "  TP Players >>"
@@ -566,7 +574,7 @@ addHover(tpBtn, Color3.fromRGB(45, 45, 60), Color3.fromRGB(60, 55, 80))
 local clickTpBtn = Instance.new("TextButton")
 clickTpBtn.Parent = Content3
 clickTpBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-clickTpBtn.Position = UDim2.new(0, 175, 0, 243)
+clickTpBtn.Position = UDim2.new(0, 175, 0, 280)
 clickTpBtn.Size = UDim2.new(0, 35, 0, 32)
 clickTpBtn.Text = "Q"
 clickTpBtn.Font = Enum.Font.GothamBold
@@ -1147,6 +1155,43 @@ mouse.Button1Down:Connect(function()
     end)
 end)
 
+-- Fling logic
+local function doFling(targetChar)
+    local myRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    local targetRoot = targetChar:FindFirstChild("HumanoidRootPart")
+    if not myRoot or not targetRoot then return end
+    local dir = (targetRoot.Position - myRoot.Position).Unit
+    local bv = Instance.new("BodyVelocity")
+    bv.Velocity = dir * FLING_FORCE + Vector3.new(0, 50, 0)
+    bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+    bv.Parent = targetRoot
+    game:GetService("Debris"):AddItem(bv, 0.2)
+end
+
+flingBtn.MouseButton1Click:Connect(function()
+    flingEnabled = not flingEnabled
+    flingIndicator.BackgroundColor3 = flingEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
+    if flingEnabled then
+        flingConnection = RunService.Heartbeat:Connect(function()
+            if not flingEnabled or not player.Character then return end
+            if tick() - lastFling < FLING_COOLDOWN then return end
+            local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
+            if not myRoot then return end
+            for _, plr in pairs(game.Players:GetPlayers()) do
+                if plr ~= player and plr.Character then
+                    local otherRoot = plr.Character:FindFirstChild("HumanoidRootPart")
+                    if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 5 then
+                        lastFling = tick()
+                        doFling(plr.Character)
+                    end
+                end
+            end
+        end)
+    else
+        if flingConnection then flingConnection:Disconnect() flingConnection = nil end
+    end
+end)
+
 -- All Chat TTS: envia automaticamente ao servidor, o app controla se fala ou nao
 local function setupPlayerChat(plr)
     if plr == player then return end
@@ -1169,50 +1214,5 @@ for _, plr in pairs(game.Players:GetPlayers()) do
 end
 game.Players.PlayerAdded:Connect(setupPlayerChat)
 
--- Fling
-local flingEnabled = false
-local FLING_FORCE = 250
-local FLING_COOLDOWN = 0.8
-local lastFling = 0
-local flingConnection = nil
-
-local flingBtn, flingIndicator = createStyledToggle("💥", "Fling", Content3, 317)
-
-local function doFling(targetChar)
-    local myRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    local targetRoot = targetChar:FindFirstChild("HumanoidRootPart")
-    if not myRoot or not targetRoot then return end
-    local dir = (targetRoot.Position - myRoot.Position).Unit
-    local bv = Instance.new("BodyVelocity")
-    bv.Velocity = dir * FLING_FORCE + Vector3.new(0, 50, 0)
-    bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
-    bv.Parent = targetRoot
-    game:GetService("Debris"):AddItem(bv, 0.2)
-end
-
-flingBtn.MouseButton1Click:Connect(function()
-    flingEnabled = not flingEnabled
-    flingIndicator.BackgroundColor3 = flingEnabled and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(255, 50, 50)
-
-    if flingEnabled then
-        flingConnection = RunService.Heartbeat:Connect(function()
-            if not flingEnabled or not player.Character then return end
-            if tick() - lastFling < FLING_COOLDOWN then return end
-            local myRoot = player.Character:FindFirstChild("HumanoidRootPart")
-            if not myRoot then return end
-            for _, plr in pairs(game.Players:GetPlayers()) do
-                if plr ~= player and plr.Character then
-                    local otherRoot = plr.Character:FindFirstChild("HumanoidRootPart")
-                    if otherRoot and (myRoot.Position - otherRoot.Position).Magnitude < 5 then
-                        lastFling = tick()
-                        doFling(plr.Character)
-                    end
-                end
-            end
-        end)
-    else
-        if flingConnection then flingConnection:Disconnect() flingConnection = nil end
-    end
-end)
 
 print("[VoiceTTS] Carregado! Z=Menu | F=Fly | Server:", SERVER_URL)
